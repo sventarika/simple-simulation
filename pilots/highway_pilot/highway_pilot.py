@@ -8,7 +8,7 @@ from loguru import logger
 from typing import TYPE_CHECKING
 
 from simple_scenario import LaneletNetworkWrapper
-from mpc_controller.advanced_mpc_controller import AdvancedMpcController
+from mpc_controller.mpc_controller import MpcController
 
 from ..pilot import Pilot
 

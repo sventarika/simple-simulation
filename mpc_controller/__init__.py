@@ -1,1 +1,1 @@
-from .advanced_mpc_controller import AdvancedMpcController
+from .mpc_controller import MpcController

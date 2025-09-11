@@ -21,7 +21,7 @@ if success_file.exists() and success_file.is_file():
     USE_MA27 = True
 
 
-class AdvancedMpcController:
+class MpcController:
 
     def __init__(self,
                  dt: float,
