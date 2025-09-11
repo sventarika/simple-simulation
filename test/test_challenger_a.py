@@ -1,10 +1,11 @@
 from pathlib import Path
 
-from test.evaluate_expected_termination_reason import evaluate_expected_termination_reason
+from test.evaluate_expected_termination_reason import (
+    evaluate_expected_termination_reason,
+)
 
 
 class TestChallengerA:
-
     DATA_DIR = Path(__file__).parent / "test_data" / "challenger_a"
 
     RESULT_DIR = Path(__file__).parent / "test_results" / "challenger_a"
@@ -17,15 +18,14 @@ class TestChallengerA:
         "a3": "is_goal_reached",
         "a4": "is_goal_reached",
         "a5": "is_goal_reached",
-        "standstill": "is_standstill"
+        "standstill": "is_standstill",
     }
 
     def _evaluate(self, scenario_name: str):
-
         evaluate_expected_termination_reason(
             self.DATA_DIR / f"{scenario_name}.json",
             self.EXPECTED_TERMINATION_REASONS[scenario_name],
-            self.RESULT_DIR
+            self.RESULT_DIR,
         )
 
     def test_challenger_a0(self):

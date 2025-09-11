@@ -11,7 +11,9 @@ from typing import TYPE_CHECKING
 
 from commonroad_dc import pycrcc
 from commonroad_dc.boundary import boundary
-from commonroad_dc.collision.trajectory_queries.trajectory_queries import obb_enclosure_polygons_static
+from commonroad_dc.collision.trajectory_queries.trajectory_queries import (
+    obb_enclosure_polygons_static,
+)
 
 from simple_scenario import Scenario
 
@@ -30,15 +32,15 @@ class SimulationCore:
     Lightweight simulation using CommonRoad vehicle models.
     """
 
-    def __init__(self,
-                 scenario_file: str,
-                 live_plot: bool = False,
-                 write_video_path: str | None = None,
-                 write_video_fps: float = 40.0,
-                 i_job: int | None = None,
-                 silent: bool = False
-                 ) -> None:
-
+    def __init__(
+        self,
+        scenario_file: str,
+        live_plot: bool = False,
+        write_video_path: str | None = None,
+        write_video_fps: float = 40.0,
+        i_job: int | None = None,
+        silent: bool = False,
+    ) -> None:
         self._verbose = not silent
 
         if self._verbose:
@@ -89,7 +91,6 @@ class SimulationCore:
         return deepcopy(self._obs_list)
 
     def reset(self, visualize: bool = False) -> dict:
-
         if self._verbose:
             logger.info("{}Reset {}", self._get_job_str(), self.__class__.__name__)
 
@@ -107,7 +108,9 @@ class SimulationCore:
         self._scenario_name = simple_scenario.id
         self._scenario = simple_scenario.get_cr_interface().scenario
         self._planning_problem = simple_scenario.get_cr_interface().planning_problem
-        self._lanelet_network_wrapper = simple_scenario.get_cr_interface().lanelet_network_wrapper
+        self._lanelet_network_wrapper = (
+            simple_scenario.get_cr_interface().lanelet_network_wrapper
+        )
 
         self._termination_status = TerminationStatus()
 
@@ -128,9 +131,14 @@ class SimulationCore:
         return obs
 
     def step(self, actions: dict) -> tuple[np.ndarray, float, bool, dict]:
-
         if self._verbose:
-            logger.info("{}Step {} (time step: {} -> {})", self._get_job_str(), self.__class__.__name__, self._time_step, self._time_step + 1)
+            logger.info(
+                "{}Step {} (time step: {} -> {})",
+                self._get_job_str(),
+                self.__class__.__name__,
+                self._time_step,
+                self._time_step + 1,
+            )
 
         self._action_list.append(actions)
 
@@ -153,8 +161,9 @@ class SimulationCore:
 
         return obs, reward, done, info
 
-    def _create_vehicle_dynamics_objects(self) -> dict[str | int, VehicleDynamicsObject]:
-
+    def _create_vehicle_dynamics_objects(
+        self,
+    ) -> dict[str | int, VehicleDynamicsObject]:
         if self._verbose:
             logger.info("Create vehicle dynamics objects")
 
@@ -165,8 +174,16 @@ class SimulationCore:
             logger.info("Create vehicle dynamics object for ego")
 
         ego_state = self._planning_problem.initial_state
-        initial_ego_state = VehicleState(x=ego_state.position[0], y=ego_state.position[1], delta=0.0, v=ego_state.velocity, theta=ego_state.orientation)
-        ego_dynamics_object = CommonRoadVehicleModel(self._time_step, initial_ego_state, self._dt)
+        initial_ego_state = VehicleState(
+            x=ego_state.position[0],
+            y=ego_state.position[1],
+            delta=0.0,
+            v=ego_state.velocity,
+            theta=ego_state.orientation,
+        )
+        ego_dynamics_object = CommonRoadVehicleModel(
+            self._time_step, initial_ego_state, self._dt
+        )
         vehicle_dynamics_objects["ego"] = ego_dynamics_object
 
         # Object vehicles
@@ -174,20 +191,46 @@ class SimulationCore:
             logger.info("Create vehicle dynamics objects for object vehicles")
 
         for dobj in self._scenario.dynamic_obstacles:
-
             if self._verbose:
-                logger.info("Create vehicle dynamics objects for object vehicle: {}", dobj.obstacle_id)
+                logger.info(
+                    "Create vehicle dynamics objects for object vehicle: {}",
+                    dobj.obstacle_id,
+                )
 
-            initial_object_vehicle_state = VehicleState(x=dobj.initial_state.position[0], y=dobj.initial_state.position[1], delta=0.0, v=dobj.initial_state.velocity, theta=dobj.initial_state.orientation)
+            initial_object_vehicle_state = VehicleState(
+                x=dobj.initial_state.position[0],
+                y=dobj.initial_state.position[1],
+                delta=0.0,
+                v=dobj.initial_state.velocity,
+                theta=dobj.initial_state.orientation,
+            )
 
-            dynamics_model = "traj" #"cr"  # TODO: needs to be specified in SimpleScenario file...
+            dynamics_model = (
+                "traj"  # "cr"  # TODO: needs to be specified in SimpleScenario file...
+            )
 
             if dynamics_model == "cr":
-                object_vehicle_dynamics_object = CommonRoadVehicleModel(self._time_step, initial_object_vehicle_state, self._dt)
+                object_vehicle_dynamics_object = CommonRoadVehicleModel(
+                    self._time_step, initial_object_vehicle_state, self._dt
+                )
             elif dynamics_model == "traj":
-                other_states = [VehicleState(x=s.position[0], y=s.position[1], delta=0.0, v=s.velocity, theta=s.orientation) for s in dobj.prediction.trajectory.state_list]
+                other_states = [
+                    VehicleState(
+                        x=s.position[0],
+                        y=s.position[1],
+                        delta=0.0,
+                        v=s.velocity,
+                        theta=s.orientation,
+                    )
+                    for s in dobj.prediction.trajectory.state_list
+                ]
 
-                object_vehicle_dynamics_object = TrajectoryVehicleModel(self._time_step, initial_object_vehicle_state, self._dt, state_list_after_initial_step=other_states)
+                object_vehicle_dynamics_object = TrajectoryVehicleModel(
+                    self._time_step,
+                    initial_object_vehicle_state,
+                    self._dt,
+                    state_list_after_initial_step=other_states,
+                )
             else:
                 raise Exception
 
@@ -196,33 +239,37 @@ class SimulationCore:
         return vehicle_dynamics_objects
 
     def _observe(self) -> dict:
-
         lanelet_map = None
         if self._time_step == 0:
             lanelet_map = self._scenario.lanelet_network
 
         dynamic_objects_observation = {}
         for do_id, vehicle_dynamics_object in self._vehicle_dynamics_objects.items():
-            dynamic_objects_observation[do_id] = vehicle_dynamics_object.observation.asdict(filter_non_available=True)
+            dynamic_objects_observation[do_id] = (
+                vehicle_dynamics_object.observation.asdict(filter_non_available=True)
+            )
 
         obs = {
-            "general": {
-                "dt": self._dt
-            },
-            "road": {
-                "lanelet_map": lanelet_map
-            },
-            "dynamic_objects": dynamic_objects_observation
+            "general": {"dt": self._dt},
+            "road": {"lanelet_map": lanelet_map},
+            "dynamic_objects": dynamic_objects_observation,
         }
 
         return obs
 
     def _update_collision_objects(self) -> None:
-
         # Road and goal
         if self._time_step == 0:
-            self._road_inclusion_polygon_group=boundary.create_road_polygons(self._scenario, method="lane_polygons",buffer=1,resample=1, triangulate=False)
-            _, self._road_boundary_collision_object=boundary.create_road_boundary_obstacle(self._scenario)
+            self._road_inclusion_polygon_group = boundary.create_road_polygons(
+                self._scenario,
+                method="lane_polygons",
+                buffer=1,
+                resample=1,
+                triangulate=False,
+            )
+            _, self._road_boundary_collision_object = (
+                boundary.create_road_boundary_obstacle(self._scenario)
+            )
 
             if len(self._planning_problem.goal.state_list) != 1:
                 msg = "Only one goal region allowed."
@@ -234,7 +281,7 @@ class SimulationCore:
                 goal_state_rect.width / 2,
                 goal_state_rect.orientation,
                 goal_state_rect.center[0],
-                goal_state_rect.center[1]
+                goal_state_rect.center[1],
             )
 
         # Collision objects
@@ -247,7 +294,7 @@ class SimulationCore:
                 obj_observation.width / 2,
                 obj_observation.theta,
                 obj_observation.x,
-                obj_observation.y
+                obj_observation.y,
             )
             if do_id == "ego":
                 self._ego_vehicle_collision_object = collision_obj
@@ -255,42 +302,65 @@ class SimulationCore:
                 self._object_vehicle_collision_objects[do_id] = collision_obj
 
     def _check_termination(self) -> bool:
-
         done = False
 
         # Offroad check
         if self._time_step == 0:
-            self._termination_status.is_offroad = not obb_enclosure_polygons_static(self._road_inclusion_polygon_group, self._ego_vehicle_collision_object)
+            self._termination_status.is_offroad = not obb_enclosure_polygons_static(
+                self._road_inclusion_polygon_group, self._ego_vehicle_collision_object
+            )
 
-        self._termination_status.is_offroad = self._termination_status.is_offroad or self._road_boundary_collision_object.collide(self._ego_vehicle_collision_object)
+        self._termination_status.is_offroad = (
+            self._termination_status.is_offroad
+            or self._road_boundary_collision_object.collide(
+                self._ego_vehicle_collision_object
+            )
+        )
 
         # Collision check
         for do_id, collision_obj in self._object_vehicle_collision_objects.items():
-            is_collision_with_this_obj = self._ego_vehicle_collision_object.collide(collision_obj)
+            is_collision_with_this_obj = self._ego_vehicle_collision_object.collide(
+                collision_obj
+            )
             if is_collision_with_this_obj:
                 if self._verbose:
                     logger.info("Collision with object vehicle {}", do_id)
                 self._termination_status.collision_obj_id = do_id
-            self._termination_status.is_collision = self._termination_status.is_collision or is_collision_with_this_obj
+            self._termination_status.is_collision = (
+                self._termination_status.is_collision or is_collision_with_this_obj
+            )
 
         # Timeout check; reset is already time_step 0, if there are 200 time_steps in total, 199 is the last one.
-        max_time = max([state.time_step.end for state in self._planning_problem.goal.state_list]) - 1
+        max_time = (
+            max(
+                [
+                    state.time_step.end
+                    for state in self._planning_problem.goal.state_list
+                ]
+            )
+            - 1
+        )
 
         if self._time_step >= max_time:
             self._termination_status.is_time_out = True
 
         # Goal reached check
-        self._termination_status.is_goal_reached = self._ego_vehicle_collision_object.collide(self._goal_region_collision_object)
+        self._termination_status.is_goal_reached = (
+            self._ego_vehicle_collision_object.collide(
+                self._goal_region_collision_object
+            )
+        )
 
         # Standstill check
-        self._termination_status.is_standstill = self._vehicle_dynamics_objects["ego"].state.v < (1 / 3.6)
+        self._termination_status.is_standstill = self._vehicle_dynamics_objects[
+            "ego"
+        ].state.v < (1 / 3.6)
 
         done = self._termination_status.is_terminated()
 
         return done
 
     def _create_info_dict(self) -> dict:
-
         # Calculate DHW, THW, TTC
         dhw = np.inf
         thw = np.inf
@@ -300,17 +370,26 @@ class SimulationCore:
         cur_do_obs = self._obs_list[-1]["dynamic_objects"]
         ego_obs = cur_do_obs["ego"]
 
-        other_obj_obs = {do_id: obj for do_id, obj in cur_do_obs.items() if do_id != "ego"}
+        other_obj_obs = {
+            do_id: obj for do_id, obj in cur_do_obs.items() if do_id != "ego"
+        }
 
         # Find lead vehicle
-        ego_llt_id = lanelet_wrapper.find_lanelet_id_by_position(ego_obs["x"], ego_obs["y"])
-        surrounding_vehicles = lanelet_wrapper.find_surrounding_vehicles(ego_obs["x"], ego_obs["y"], other_obj_obs)
+        ego_llt_id = lanelet_wrapper.find_lanelet_id_by_position(
+            ego_obs["x"], ego_obs["y"]
+        )
+        surrounding_vehicles = lanelet_wrapper.find_surrounding_vehicles(
+            ego_obs["x"], ego_obs["y"], other_obj_obs
+        )
         lead_vehicle = surrounding_vehicles.lead
 
         if lead_vehicle:
-
-            ego_s, _ = lanelet_wrapper.from_cart_to_llt_frenet(ego_llt_id, ego_obs["x"], ego_obs["y"])
-            lead_s, _ = lanelet_wrapper.from_cart_to_llt_frenet(ego_llt_id, lead_vehicle["x"], lead_vehicle["y"])
+            ego_s, _ = lanelet_wrapper.from_cart_to_llt_frenet(
+                ego_llt_id, ego_obs["x"], ego_obs["y"]
+            )
+            lead_s, _ = lanelet_wrapper.from_cart_to_llt_frenet(
+                ego_llt_id, lead_vehicle["x"], lead_vehicle["y"]
+            )
 
             dhw = np.round(lead_s - ego_s, 2)
             thw = np.round(dhw / ego_obs["v"], 4)
@@ -318,14 +397,14 @@ class SimulationCore:
             dv = ego_obs["v"] - lead_vehicle["v"]
 
             if dv > 0:
-                ttc =  np.round(dhw / dv, 4)
+                ttc = np.round(dhw / dv, 4)
 
         info = {
             "time_step": self._time_step,
             "termination_status": self._termination_status.asdict(),
             "dhw": dhw,
             "thw": thw,
-            "ttc": ttc
+            "ttc": ttc,
         }
 
         return info
@@ -337,7 +416,6 @@ class SimulationCore:
         return job_str
 
     def _show(self) -> None:  # noqa: PLR0912
-
         debug_image = False
 
         if not self._live_plot and not self._write_video_path and not debug_image:
@@ -345,27 +423,31 @@ class SimulationCore:
 
         id_fontsize = 2
 
-        self._scenario.lanelet_network.draw(self._cr_renderer, {"lanelet": {"fill_lanelet": False}})
+        self._scenario.lanelet_network.draw(
+            self._cr_renderer, {"lanelet": {"fill_lanelet": False}}
+        )
 
         # Draw goal position
         self._goal_region_collision_object.draw(
             self._cr_renderer,
-            draw_params={"facecolor": "red", "edgecolor": "red", "zorder": 20}
+            draw_params={"facecolor": "red", "edgecolor": "red", "zorder": 20},
         )
 
         # Draw ego vehicle
         self._ego_vehicle_collision_object.draw(
             self._cr_renderer,
-            draw_params={"facecolor": "blue", "edgecolor": "blue", "zorder": 30}
+            draw_params={"facecolor": "blue", "edgecolor": "blue", "zorder": 30},
         )
 
         # Draw object vehicles
         for obj in self._object_vehicle_collision_objects.values():
-            obj.draw(self._cr_renderer, draw_params={"facecolor": "green", "edgecolor": "green", "zorder": 30})
+            obj.draw(
+                self._cr_renderer,
+                draw_params={"facecolor": "green", "edgecolor": "green", "zorder": 30},
+            )
 
         # Draw ids
         for do_id, obj in self._vehicle_dynamics_objects.items():
-
             draw_params = {"facecolor": "green", "edgecolor": "green", "zorder": 30}
 
             if do_id == "ego":
@@ -374,7 +456,13 @@ class SimulationCore:
             else:
                 center = self._object_vehicle_collision_objects[do_id].center()
 
-            id_label = mpl.text.Text(center[0], center[1], f"{do_id} | {obj.state.v * 3.6:.0f} km/h", fontsize=id_fontsize, zorder=31)
+            id_label = mpl.text.Text(
+                center[0],
+                center[1],
+                f"{do_id} | {obj.state.v * 3.6:.0f} km/h",
+                fontsize=id_fontsize,
+                zorder=31,
+            )
             self._cr_renderer.static_artists.append(id_label)
 
         # To draw the road boundaries used to calculate off-road
@@ -405,21 +493,36 @@ class SimulationCore:
         else:
             filename = None
 
-        render_frame = self._cr_renderer.render(show=False,
-                                                keep_static_artists=False,
-                                                mode="rgb_array",
-                                                figsize=fsize,
-                                                plot_limits=plot_lims,
-                                                filename=filename)
+        render_frame = self._cr_renderer.render(
+            show=False,
+            keep_static_artists=False,
+            mode="rgb_array",
+            figsize=fsize,
+            plot_limits=plot_lims,
+            filename=filename,
+        )
 
         render_frame = render_frame.astype(np.float32)
 
         # Add frame number + termination reason
         termination_reason = ""
         if self._termination_status.is_terminated():
-            termination_reason = next(name for name, status in self._termination_status.asdict().items() if status)
+            termination_reason = next(
+                name
+                for name, status in self._termination_status.asdict().items()
+                if status
+            )
 
-        cv2.putText(render_frame, f"{self._time_step} ({self._time_step * self._dt:.1f}s) {termination_reason}", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, color=[0, 0, 0], thickness=1, lineType=cv2.LINE_AA)
+        cv2.putText(
+            render_frame,
+            f"{self._time_step} ({self._time_step * self._dt:.1f}s) {termination_reason}",
+            (0, 25),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1,
+            color=[0, 0, 0],
+            thickness=1,
+            lineType=cv2.LINE_AA,
+        )
 
         render_frames = [render_frame]
 
@@ -434,14 +537,16 @@ class SimulationCore:
         render_frame = render_frames[0]
 
         if self._live_plot:
-            cv2.imshow(self._scenario_name, cv2.cvtColor(render_frame, cv2.COLOR_RGB2BGR).astype(np.uint8))
+            cv2.imshow(
+                self._scenario_name,
+                cv2.cvtColor(render_frame, cv2.COLOR_RGB2BGR).astype(np.uint8),
+            )
 
             # Press Q on keyboard to  exit
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 return
 
         if self._write_video_path:
-
             if self._video_writer is None:
                 self._video_shape = render_frame.shape[:2]
 
@@ -454,10 +559,18 @@ class SimulationCore:
                 if not video_dir.exists():
                     video_dir.mkdir(parents=True)
 
-                self._video_writer = cv2.VideoWriter(str(video_file), cv2.VideoWriter_fourcc(*"avc1"), self._video_fps, (int(self._video_shape[1]), int(self._video_shape[0])),True)
+                self._video_writer = cv2.VideoWriter(
+                    str(video_file),
+                    cv2.VideoWriter_fourcc(*"avc1"),
+                    self._video_fps,
+                    (int(self._video_shape[1]), int(self._video_shape[0])),
+                    True,
+                )
             if self._video_shape != render_frame.shape[:2]:
                 raise Exception
 
-            render_frame_video = cv2.cvtColor(render_frame, cv2.COLOR_RGBA2BGR).astype(np.uint8)
+            render_frame_video = cv2.cvtColor(render_frame, cv2.COLOR_RGBA2BGR).astype(
+                np.uint8
+            )
 
             self._video_writer.write(render_frame_video)

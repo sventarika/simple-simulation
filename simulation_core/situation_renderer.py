@@ -15,24 +15,25 @@ if TYPE_CHECKING:
 
 
 class SituationRenderer(MPRenderer):
-
-    def __init__(self,
-                 draw_params: ParamServer | dict | None = None,
-                 plot_limits: list[int | float] | None = None,
-                 ax: mpl.axes.Axes | None = None,
-                 figsize: tuple[float, float] | None = None,
-                 focus_obstacle: Obstacle| None = None
-                 ) -> None:
+    def __init__(
+        self,
+        draw_params: ParamServer | dict | None = None,
+        plot_limits: list[int | float] | None = None,
+        ax: mpl.axes.Axes | None = None,
+        figsize: tuple[float, float] | None = None,
+        focus_obstacle: Obstacle | None = None,
+    ) -> None:
         super().__init__(draw_params, plot_limits, ax, figsize, focus_obstacle)
 
-    def render(self,
-               show: bool = False,
-               filename: str | None = None,
-               keep_static_artists: bool = False,
-               mode: str = "human",
-               figsize: tuple[float, float] | None = None,
-               plot_limits: list[float] | None = None
-               ) -> np.ndarray | list[np.ndarray] | None:
+    def render(
+        self,
+        show: bool = False,
+        filename: str | None = None,
+        keep_static_artists: bool = False,
+        mode: str = "human",
+        figsize: tuple[float, float] | None = None,
+        plot_limits: list[float] | None = None,
+    ) -> np.ndarray | list[np.ndarray] | None:
         """
         Render all objects from buffer
 
@@ -56,12 +57,14 @@ class SituationRenderer(MPRenderer):
         self.ax.set_aspect("equal")
 
         if mode == "rgb_array":
-
             if figsize is not None:
                 self.f.set_size_inches(figsize)
 
             if plot_limits is not None:
-                self.ax.set(xlim=(plot_limits[0], plot_limits[1]), ylim=(plot_limits[2], plot_limits[3]))
+                self.ax.set(
+                    xlim=(plot_limits[0], plot_limits[1]),
+                    ylim=(plot_limits[2], plot_limits[3]),
+                )
 
             self.ax.spines["top"].set_visible(False)
             self.ax.spines["right"].set_visible(False)
@@ -81,17 +84,21 @@ class SituationRenderer(MPRenderer):
             # Create rect out of tightbox (inches)
             tightbox = self.f.get_tightbbox()
             # rect : tuple (left, bottom, right, top), default: (0, 0, 1, 1)
-            rect = np.array([
-                (tightbox.x0 / fw) * fw,
-                (tightbox.y0 / fh) * fh,
-                (tightbox.x1 / fw) * fw,
-                (tightbox.y1 / fh) * fh
-            ])
+            rect = np.array(
+                [
+                    (tightbox.x0 / fw) * fw,
+                    (tightbox.y0 / fh) * fh,
+                    (tightbox.x1 / fw) * fw,
+                    (tightbox.y1 / fh) * fh,
+                ]
+            )
             rect = np.round(rect, 1)
             rect = tuple(rect)
 
             with io.BytesIO() as io_buf:
-                self.f.savefig(io_buf, format="raw", dpi=dpi, bbox_inches=Bbox.from_extents(*rect))
+                self.f.savefig(
+                    io_buf, format="raw", dpi=dpi, bbox_inches=Bbox.from_extents(*rect)
+                )
                 io_buf.seek(0)
                 img_data = np.frombuffer(io_buf.getvalue(), dtype=np.uint8)
 
@@ -104,7 +111,10 @@ class SituationRenderer(MPRenderer):
         if show:
             self.f.show()
 
-        if self.draw_params.by_callstack(param_path="axis_visible", call_stack=()) is False:
+        if (
+            self.draw_params.by_callstack(param_path="axis_visible", call_stack=())
+            is False
+        ):
             self.ax.axes.xaxis.set_visible(False)
             self.ax.axes.yaxis.set_visible(False)
 

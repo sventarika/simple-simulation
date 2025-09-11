@@ -11,8 +11,9 @@ class VehicleDynamicsObject:
     Super class of all vehicle dynamic simulators.
     """
 
-    def __init__(self, initial_time_step: int, initial_state: VehicleState, dt: float) -> None:
-
+    def __init__(
+        self, initial_time_step: int, initial_state: VehicleState, dt: float
+    ) -> None:
         self._initial_time_step = initial_time_step
         self._time_step = initial_time_step
         self._dt = dt
@@ -32,7 +33,11 @@ class VehicleDynamicsObject:
 
     @property
     def observation(self) -> VehicleState:
-        observable_state = VehicleState(**self.state.asdict(filter_non_available=True), length=self.length, width=self.width)
+        observable_state = VehicleState(
+            **self.state.asdict(filter_non_available=True),
+            length=self.length,
+            width=self.width,
+        )
         return observable_state
 
     @property

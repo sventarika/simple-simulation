@@ -18,14 +18,14 @@ class CommonRoadVehicleModel(VehicleDynamicsObject):
     Lightweight vehicle dynamics simulator using the CommonRoad vehiclemodels.
     """
 
-    def __init__(self,
-                 initial_time_step: int,
-                 initial_state: VehicleState,
-                 dt: float,
-                 vehicle_dynamics_model_name: str = "ks",
-                 vehicle_type: int = 2
-                 ) -> None:
-
+    def __init__(
+        self,
+        initial_time_step: int,
+        initial_state: VehicleState,
+        dt: float,
+        vehicle_dynamics_model_name: str = "ks",
+        vehicle_type: int = 2,
+    ) -> None:
         super().__init__(initial_time_step, initial_state, dt)
 
         # Vehicle Type
@@ -53,14 +53,34 @@ class CommonRoadVehicleModel(VehicleDynamicsObject):
         elif vehicle_dynamics_model_name == "st":
             vehicle_model_obj = VehicleModel.ST
             initial_internal_state = init_st(initial_state_values)
-            internal_state_names = ("x", "y", "delta", "v", "theta", "theta_rate", "slip_angle")
+            internal_state_names = (
+                "x",
+                "y",
+                "delta",
+                "v",
+                "theta",
+                "theta_rate",
+                "slip_angle",
+            )
         elif vehicle_dynamics_model_name == "mb":
             vehicle_model_obj = VehicleModel.MB
-            initial_internal_state = init_mb(initial_state_values, self._vehicle_parameters)
-            internal_state_names = ("x", "y", "delta", "v", "theta", "theta_rate", "slip_angle")
+            initial_internal_state = init_mb(
+                initial_state_values, self._vehicle_parameters
+            )
+            internal_state_names = (
+                "x",
+                "y",
+                "delta",
+                "v",
+                "theta",
+                "theta_rate",
+                "slip_angle",
+            )
 
         self._vehicle_dynamics_model_name = vehicle_dynamics_model_name
-        self._vehicle_dynamics = VehicleDynamics.from_model(vehicle_model_obj, vehicle_type_obj)
+        self._vehicle_dynamics = VehicleDynamics.from_model(
+            vehicle_model_obj, vehicle_type_obj
+        )
 
         self._internal_state_names = internal_state_names
         self._internal_state_list = [np.array(initial_internal_state)]
@@ -90,7 +110,6 @@ class CommonRoadVehicleModel(VehicleDynamicsObject):
         return self._vehicle_parameters.longitudinal.a_max
 
     def step(self, delta_v: float, a: float) -> VehicleState:
-
         t0 = self._time_step * self._dt
         t1 = t0 + self._dt
 
@@ -105,11 +124,12 @@ class CommonRoadVehicleModel(VehicleDynamicsObject):
         return new_state
 
     def _simulate(self, t0: float, t1: float, delta_v: float, a: float) -> np.ndarray:
-
         cur_state = self._internal_state_list[-1]
         u = [delta_v, a]
 
-        new_internal_state = self._vehicle_dynamics.forward_simulation(cur_state, u, t1 - t0, throw=True)
+        new_internal_state = self._vehicle_dynamics.forward_simulation(
+            cur_state, u, t1 - t0, throw=True
+        )
 
         self._input_list.append(u)
         self._internal_state_list.append(new_internal_state)

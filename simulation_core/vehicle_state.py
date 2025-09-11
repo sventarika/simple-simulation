@@ -14,7 +14,7 @@ class VehicleState:
     length: float = field(default=None)
     width: float = field(default=None)
 
-    def asdict(self, filter_non_available: bool=False) -> dict:
+    def asdict(self, filter_non_available: bool = False) -> dict:
         d = asdict(self)
         if filter_non_available:
             d_filtered = {k: v for k, v in d.items() if v is not None}

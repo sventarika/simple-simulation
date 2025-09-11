@@ -16,17 +16,16 @@ from pilots import DummyPilot, HighwayPilot
 
 
 class SingleSimulationManager:
-
-    def __init__(self,
-                 scenario_file_or_config: str | Path | dict | Scenario,
-                 result_dir: str | None=None,
-                 i_job: int | None=None,
-                 live_plot: bool=False,
-                 save_video: bool=False,
-                 save_result: bool=False,
-                 monitor_pilots: bool=False
-                 ) -> None:
-
+    def __init__(
+        self,
+        scenario_file_or_config: str | Path | dict | Scenario,
+        result_dir: str | None = None,
+        i_job: int | None = None,
+        live_plot: bool = False,
+        save_video: bool = False,
+        save_result: bool = False,
+        monitor_pilots: bool = False,
+    ) -> None:
         self._scenario = Scenario.from_x(scenario_file_or_config)
 
         self._i_job = i_job
@@ -48,8 +47,8 @@ class SingleSimulationManager:
                 msg = "'save_results' is True, but there is no result_dir."
                 raise RuntimeError(msg)
             if self._monitor_pilots:
-               msg = "'monitor_pilots' is True, but there is no result_dir."
-               raise RuntimeError(msg)
+                msg = "'monitor_pilots' is True, but there is no result_dir."
+                raise RuntimeError(msg)
         else:
             self._result_dir.mkdir(exist_ok=True)
             if self._save_video:
@@ -64,22 +63,22 @@ class SingleSimulationManager:
         return self._scenario.id
 
     def _log_info(self, msg: str) -> None:
-
         if self._i_job is not None:
             msg = f"Job {self._i_job:05d}: {msg}"
 
         logger.info(msg)
 
     def simulate(self) -> dict:
-
         self._log_info(f"Simulate scenario: {self.scenario_name}")
 
         # Set up simulation core that is responsible for vehicle dynamic simulation
         # TODO: use simple scenario file and specifiy the models there; input here is maybe simplescenario file or a list of needed agents?
-        simulation_core = SimulationCore(self._scenario,
-                                         live_plot=self._live_plot,
-                                         write_video_path=self._video_dir,
-                                         i_job=self._i_job)
+        simulation_core = SimulationCore(
+            self._scenario,
+            live_plot=self._live_plot,
+            write_video_path=self._video_dir,
+            i_job=self._i_job,
+        )
 
         # Init simulation and get first observation
         obs = simulation_core.reset()
@@ -90,11 +89,9 @@ class SingleSimulationManager:
         pilots = {}
         for obj_id in obs["dynamic_objects"]:
             if obj_id == "ego":
-
                 pilots[obj_id] = HighwayPilot(dt, ego_id=obj_id, silent=True)
 
             else:
-
                 pilots[obj_id] = DummyPilot()
 
         # Run main simulation loop
@@ -105,7 +102,6 @@ class SingleSimulationManager:
         elapsed_time_steps = 0
         done = False
         while not done:
-
             self._log_info(f"Step main loop at time_step {elapsed_time_steps}")
 
             # Collect actions from pilots
@@ -113,7 +109,9 @@ class SingleSimulationManager:
             cur_actions = {}
             for obj_id, pilot in pilots.items():
                 cur_actions[obj_id] = pilot.step(obs)
-                self._log_info(f"Step pilot of '{obj_id}' ({pilot.__class__.__name__}) -> action: ({cur_actions[obj_id][0]:.3f}, {cur_actions[obj_id][1]:.3f})")
+                self._log_info(
+                    f"Step pilot of '{obj_id}' ({pilot.__class__.__name__}) -> action: ({cur_actions[obj_id][0]:.3f}, {cur_actions[obj_id][1]:.3f})"
+                )
 
             # Update simulation core
             self._log_info("Step SimulationCore")
@@ -129,17 +127,25 @@ class SingleSimulationManager:
         self._log_info("Simluation done")
         simulated_time = info["time_step"] * dt
         fps = simulated_time / execution_time
-        self._log_info(f"Execution time: {execution_time:.2f}s, simulated time: {simulated_time:.2f}s, fps: {fps:.2f}")
+        self._log_info(
+            f"Execution time: {execution_time:.2f}s, simulated time: {simulated_time:.2f}s, fps: {fps:.2f}"
+        )
 
         # Reason
-        termination_reason = next(name for name, status in info["termination_status"].items() if status)
+        termination_reason = next(
+            name for name, status in info["termination_status"].items() if status
+        )
         available_termination_reasons = list(info["termination_status"].keys())
-        self._log_info(f"Termination reason: {termination_reason} (from: {available_termination_reasons})")
+        self._log_info(
+            f"Termination reason: {termination_reason} (from: {available_termination_reasons})"
+        )
 
         if self._monitor_pilots:
             for obj_id, pilot in pilots.items():
                 if isinstance(pilot, HighwayPilot):
-                    pilot.create_monitor_plots(self._monitor_plot_dir, f"{obj_id}_{self.scenario_name}")
+                    pilot.create_monitor_plots(
+                        self._monitor_plot_dir, f"{obj_id}_{self.scenario_name}"
+                    )
 
         # Aggregate dhw etc.
         dhws = [elem["dhw"] for elem in info_list]
@@ -152,7 +158,9 @@ class SingleSimulationManager:
 
         # Create result object
         ego_states = []
-        for cur_observations, cur_actions in zip(simulation_core.observation_list[:-1], simulation_core.action_list):
+        for cur_observations, cur_actions in zip(
+            simulation_core.observation_list[:-1], simulation_core.action_list
+        ):
             cur_ego_observation = cur_observations["dynamic_objects"]["ego"]
             cur_ego_action = cur_actions["ego"]
 
@@ -170,19 +178,22 @@ class SingleSimulationManager:
             "dhw_min": dhw_min,
             "thw_min": thw_min,
             "ttc_min": ttc_min,
-            "ego_states": ego_states
+            "ego_states": ego_states,
         }
 
         # Save to file
         if self._save_result:
             export_file = self._result_dir / f"{self.scenario_name}_results.json"
             with export_file.open("wb") as f:
-                s = orjson.dumps(res, option=orjson.OPT_NAIVE_UTC | orjson.OPT_SERIALIZE_NUMPY | orjson.orjson.OPT_INDENT_2)
+                s = orjson.dumps(
+                    res,
+                    option=orjson.OPT_NAIVE_UTC
+                    | orjson.OPT_SERIALIZE_NUMPY
+                    | orjson.orjson.OPT_INDENT_2,
+                )
                 f.write(s)
 
         if self._i_job is not None:
-            res = {
-                str(self._i_job): res
-            }
+            res = {str(self._i_job): res}
 
         return res

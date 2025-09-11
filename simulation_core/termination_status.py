@@ -15,5 +15,11 @@ class TerminationStatus:
         return asdict(self)
 
     def is_terminated(self) -> bool:
-        termination_factors = (self.is_offroad, self.is_collision, self.is_time_out, self.is_goal_reached, self.is_standstill)
+        termination_factors = (
+            self.is_offroad,
+            self.is_collision,
+            self.is_time_out,
+            self.is_goal_reached,
+            self.is_standstill,
+        )
         return any(termination_factors)

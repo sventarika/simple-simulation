@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from .pilot import Pilot
 
+
 class DummyPilot(Pilot):
     """
     Pilot for TrajectoryVehicleModel.

@@ -5,9 +5,7 @@ from copy import deepcopy
 
 
 class Pilot:
-
     def __init__(self) -> None:
-
         # Monitoring
         self._state_list = []
         self._action_list = []

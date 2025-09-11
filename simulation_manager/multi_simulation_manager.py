@@ -13,16 +13,15 @@ from simulation_manager import SingleSimulationManager
 
 
 class MultiSimulationManager:
-
-    def __init__(self,
-                 scenario_list: str | Path | dict | Scenario,
-                 n_workers: int=1,
-                 result_dir: str | None = None,
-                 save_videos: bool=False,
-                 save_results: bool=False,
-                 monitor_pilots: bool=False
-                 ) -> None:
-
+    def __init__(
+        self,
+        scenario_list: str | Path | dict | Scenario,
+        n_workers: int = 1,
+        result_dir: str | None = None,
+        save_videos: bool = False,
+        save_results: bool = False,
+        monitor_pilots: bool = False,
+    ) -> None:
         self._scenario_list = []
         # If input is Scenario object, need to take its config. Otherwise MP will not be possible!
         for scenario in scenario_list:
@@ -58,8 +57,8 @@ class MultiSimulationManager:
                 msg = "'save_results' is True, but there is no result_dir."
                 raise RuntimeError(msg)
             if self._monitor_pilots:
-               msg = "'monitor_pilots' is True, but there is no result_dir."
-               raise RuntimeError(msg)
+                msg = "'monitor_pilots' is True, but there is no result_dir."
+                raise RuntimeError(msg)
         else:
             self._result_dir = Path(result_dir)
             self._result_dir.mkdir(exist_ok=True)
@@ -73,7 +72,6 @@ class MultiSimulationManager:
                 self._video_dir.mkdir()
 
     def simulate(self) -> dict:
-
         logger.info("Simulate {} scenario(s)", len(self._scenario_list))
 
         t0 = process_time()
@@ -82,7 +80,16 @@ class MultiSimulationManager:
         logger.info("Collect args for all runs")
         all_argument_lists = []
         for i_job, scenario in enumerate(self._scenario_list):
-            all_argument_lists.append([scenario, self._result_dir, i_job, self._save_videos, self._save_results, self._monitor_pilots])
+            all_argument_lists.append(
+                [
+                    scenario,
+                    self._result_dir,
+                    i_job,
+                    self._save_videos,
+                    self._save_results,
+                    self._monitor_pilots,
+                ]
+            )
 
         all_test_results = {}
 
@@ -93,27 +100,44 @@ class MultiSimulationManager:
                 test_result = self._simulate_single_scenario(*arg_list)
                 all_test_results.update(test_result)
         else:
-
             n_max_cpu = mp.cpu_count() - 1
             n_workers = min(self._n_workers, n_max_cpu)
 
-            logger.info("Run in parallel with {} workers (max_workers: {})", n_workers, n_max_cpu)
+            logger.info(
+                "Run in parallel with {} workers (max_workers: {})",
+                n_workers,
+                n_max_cpu,
+            )
 
             with mp.Pool(n_workers, maxtasksperchild=1) as p:
-                test_result_iterator = p.imap(MultiSimulationManager._unpack_argument_list_and_simulate_single_scenario, all_argument_lists, chunksize=1)
+                test_result_iterator = p.imap(
+                    MultiSimulationManager._unpack_argument_list_and_simulate_single_scenario,
+                    all_argument_lists,
+                    chunksize=1,
+                )
 
-                for test_result in tqdm(test_result_iterator, total=len(all_argument_lists)):
+                for test_result in tqdm(
+                    test_result_iterator, total=len(all_argument_lists)
+                ):
                     all_test_results.update(test_result)
 
         logger.info("Simulation done")
         execution_time = process_time() - t0
-        logger.info("Execution time for {} scenarios: {:.2f}s", len(all_argument_lists), execution_time)
+        logger.info(
+            "Execution time for {} scenarios: {:.2f}s",
+            len(all_argument_lists),
+            execution_time,
+        )
 
         if self._save_results:
-
             all_test_results_file = self._result_dir / "all_test_results.json"
             with all_test_results_file.open("wb") as f:
-                s = orjson.dumps(all_test_results, option=orjson.OPT_NAIVE_UTC | orjson.OPT_SERIALIZE_NUMPY | orjson.orjson.OPT_INDENT_2)
+                s = orjson.dumps(
+                    all_test_results,
+                    option=orjson.OPT_NAIVE_UTC
+                    | orjson.OPT_SERIALIZE_NUMPY
+                    | orjson.orjson.OPT_INDENT_2,
+                )
                 f.write(s)
 
         return all_test_results
@@ -123,9 +147,23 @@ class MultiSimulationManager:
         return MultiSimulationManager._simulate_single_scenario(*argument_list)
 
     @staticmethod
-    def _simulate_single_scenario(scenario: str | Path | dict | Scenario, result_dir: Path, i_job: int, save_video: bool, save_result: bool, monitor_pilots: bool) -> dict:
-
-        simulation_manager = SingleSimulationManager(scenario, result_dir=result_dir, i_job=i_job, live_plot=False, save_video=save_video, save_result=save_result, monitor_pilots=monitor_pilots)
+    def _simulate_single_scenario(
+        scenario: str | Path | dict | Scenario,
+        result_dir: Path,
+        i_job: int,
+        save_video: bool,
+        save_result: bool,
+        monitor_pilots: bool,
+    ) -> dict:
+        simulation_manager = SingleSimulationManager(
+            scenario,
+            result_dir=result_dir,
+            i_job=i_job,
+            live_plot=False,
+            save_video=save_video,
+            save_result=save_result,
+            monitor_pilots=monitor_pilots,
+        )
 
         test_result = simulation_manager.simulate()
 
@@ -133,7 +171,6 @@ class MultiSimulationManager:
 
 
 if __name__ == "__main__":
-
     challenger_scenarios = "data/challenger_scenario_examples"
 
     cfg = {

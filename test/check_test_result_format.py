@@ -1,6 +1,4 @@
-
-def check_test_result_format(result: dict, multiple_jobs: bool=False):
-
+def check_test_result_format(result: dict, multiple_jobs: bool = False):
     required_keys = [
         "scenario_name",
         "termination_reason",
@@ -9,15 +7,13 @@ def check_test_result_format(result: dict, multiple_jobs: bool=False):
         "dhw_min",
         "thw_min",
         "ttc_min",
-        "ego_states"
+        "ego_states",
     ]
 
     if multiple_jobs:
         result_per_job = result
     else:
-        result_per_job = {
-            0: result
-        }
+        result_per_job = {0: result}
 
     for job_result in result_per_job.values():
         for key in required_keys:

@@ -11,16 +11,15 @@ if TYPE_CHECKING:
     from .vehicle_state import VehicleState
 
 
-
 class TrajectoryVehicleModel(VehicleDynamicsObject):
-
-    def __init__(self,
-                 initial_time_step: int,
-                 initial_state: VehicleState,
-                 dt: float,
-                 state_list_after_initial_step: list[VehicleState],
-                 vehicle_type: int = 2
-                 ) -> None:
+    def __init__(
+        self,
+        initial_time_step: int,
+        initial_state: VehicleState,
+        dt: float,
+        state_list_after_initial_step: list[VehicleState],
+        vehicle_type: int = 2,
+    ) -> None:
         super().__init__(initial_time_step, initial_state, dt)
 
         # Vehicle type
@@ -46,7 +45,6 @@ class TrajectoryVehicleModel(VehicleDynamicsObject):
         return self._vehicle_parameters.w
 
     def step(self, *args, **kwargs) -> VehicleState:  # noqa: ARG002
-
         self._time_step += 1
         new_state = self._internal_state_list[self._time_step - self._initial_time_step]
 
