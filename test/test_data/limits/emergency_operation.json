@@ -1,0 +1,17 @@
+{
+    "scenario_id": "cutin",
+    "category": "emergency_operation_goal_possible",
+    "limits": {
+        "v_lon_min": 0,
+        "v_lon_max": 120,
+        "v_lat_min": -2,
+        "v_lat_max": 2,
+        "a_lon_min": -6,
+        "a_lon_max": 6,
+        "a_lat_min": -2,
+        "a_lat_max": 2,
+        "min_ttb_best_case" : 3,
+        "min_tts_best_case" : 2
+    },
+    "details": ""
+}

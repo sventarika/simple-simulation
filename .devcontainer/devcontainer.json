@@ -1,0 +1,34 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/docker-existing-dockerfile
+{
+	"name": "simulation-manager",
+	"image": "gitlab.ika.rwth-aachen.de:5050/fb-fi/simulation/simple-simulation/simulation-manager:2.1.4",
+
+	"runArgs": [
+        "--net=host"
+    ],
+
+	"containerUser": "devcontaineruser",
+
+	"workspaceMount": "source=${localWorkspaceFolder},target=/work/simulation-manager,type=bind",
+	"workspaceFolder": "/work/simulation-manager",
+
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"eamodio.gitlens",
+				"mhutchie.git-graph",
+				"mechatroner.rainbow-csv",
+				"analytic-signal.preview-mp4",
+				"tamasfe.even-better-toml"
+			]
+		}
+	},
+
+	"mounts": [
+		// "source=/work/data02/vater/lva/cr-interface/submodules/scenario-generation,target=/work/scenario-generation,type=bind,consistency=cached",  // rhea4,
+		// "source=/work/data02/tarlowski/cr-interface/results/archiv/230831_170712_ZS7_BatchScenarioGenerator/xml,target=/work/data02/tarlowski/cr-interface/results/archiv/230831_170712_ZS7_BatchScenarioGenerator/xml,type=bind,consistency=cached"  // rhea4
+	]
+
+}
