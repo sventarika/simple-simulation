@@ -55,7 +55,7 @@ class SingleSimulationEvaluator:
         self._result_dir.mkdir(exist_ok=True)
         self._report_dir = self._result_dir
 
-        # Limits + 1% tolerance
+        # Limits + 1 per cent tolerance
         self._a_max_long = 4*1.01 if self._operation_mode_index == "1.2" else 6*1.01 # m/s^2
         self._a_max_lat = 1*1.01 if self._operation_mode_index == "1.2" else 2*1.01 # m/s^2
         self._thw_min = 1.8*1.01 if self._operation_mode_index == "1.2" else 0.9*1.01 # s
@@ -153,7 +153,6 @@ class SingleSimulationEvaluator:
             thw = np.inf
             ttc = np.inf
             ttb = np.inf
-            # teb = np.inf
             tts = np.inf
 
             # Replicate observation
@@ -257,7 +256,6 @@ class SingleSimulationEvaluator:
                            "t [s]", "v [m/s]", "a long [m/s^2]", filename="t-v-a_long.png")
 
         # Plot a_long over t
-        #  max_a_long = round(max(abs(i) for i in self._a_long_list))
         self.generate_plot(self._t, self._a_long_list, None, "t [s]", "a_long [m/s^2]",
                            None, -7, 7, "a_long.png", [-self._a_max_long,-10, "red"], [self._a_max_long,10, "red"])
         # Plot a_lat over t
@@ -475,11 +473,8 @@ class SingleSimulationEvaluator:
         c.drawString(50, h-125, "during immediate deceleration with maximum longitudinal deceleration.")
 
         ## Plots
-        # c.drawImage(self._plot_dir._str + f"/{self._scenario_name}_t-ttc-ttb.png",50, h-350, width = 250 *1.6, height = 250)
         c.drawImage(self._result_dir / f"{self._scenario_name}_t-ttb.png",50, h-450, width = 280 *1.6, height = 280)
         c.drawImage(self._result_dir / f"{self._scenario_name}_t-tts.png",50, h-730, width = 280 *1.6, height = 280)
-        # c.drawImage(self._plot_dir._str + f"/{self._scenario_name}_t-tts-thw.png",50, h-600, width = 250 *1.6, height = 250)
-        # c.drawImage(self._plot_dir._str + f"/{self._scenario_name}_t-v-a_long.png",50, h-850, width = 250 *1.6, height = 250)
 
         c.showPage()
 

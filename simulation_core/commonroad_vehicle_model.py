@@ -44,7 +44,7 @@ class CommonRoadVehicleModel(VehicleDynamicsObject):
             msg = f"Model name '{vehicle_dynamics_model_name}' not implemented. Choose from: {allowed_vehicle_dynamics_model_names}"
             raise Exception(msg)
 
-        initial_state_values = initial_state.values  # noqa: PD011
+        initial_state_values = initial_state.values
 
         if vehicle_dynamics_model_name == "ks":
             vehicle_model_obj = VehicleModel.KS
@@ -110,13 +110,6 @@ class CommonRoadVehicleModel(VehicleDynamicsObject):
         u = [delta_v, a]
 
         new_internal_state = self._vehicle_dynamics.forward_simulation(cur_state, u, t1 - t0, throw=True)
-
-        # Display total acceleration
-        # u2 = a
-        # x4 = cur_state[3]
-        # x5_dot = (cur_state[3] / (self._vehicle_parameters.a + self._vehicle_parameters.b)) * np.tan(cur_state[2])
-        # total_acceleration = np.sqrt((u2 ** 2) + ((x4 * x5_dot) ** 2))
-        # logger.debug("total_acceleration: {:.3f}", total_acceleration)
 
         self._input_list.append(u)
         self._internal_state_list.append(new_internal_state)

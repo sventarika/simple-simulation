@@ -134,11 +134,9 @@ class MultiSimulationManager:
 
 if __name__ == "__main__":
 
-    # example_scenarios = "data/example_scenarios"
     challenger_scenarios = "data/challenger_scenario_examples"
 
     cfg = {
-        # "scenario_xml_dir": "/work/data02/tarlowski/cr-interface/results/archiv/230831_170712_ZS7_BatchScenarioGenerator/xml",
         "scenario_xml_dir": "test/test_data/challenger_a/experiment1",
         "first_scenario_idx": 0,
         "last_scenario_idx": -1,
@@ -146,11 +144,6 @@ if __name__ == "__main__":
         "create_video": False,
         "n_workers": 9,
         "show_live_plot": False,
-        # "create_video": True,
-        # "debug_scenario_name_part": "No+410-"
-        # "debug_scenario_name_part": "No+08498-"  # TODO FIX ERROR in traj vehicle
-        # "debug_scenario_name_part": "+No+00000-"  # THW, TTC debug
-        # "debug_scenario_name_part": "+No+06561-"  # collision object debug
     }
 
     MultiSimulationManager.run(parsed_args_dict=cfg)

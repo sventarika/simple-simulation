@@ -312,10 +312,6 @@ class SimulationCore:
             ego_s, _ = lanelet_wrapper.from_cart_to_llt_frenet(ego_llt_id, ego_obs["x"], ego_obs["y"])
             lead_s, _ = lanelet_wrapper.from_cart_to_llt_frenet(ego_llt_id, lead_vehicle["x"], lead_vehicle["y"])
 
-            #Korrektur um Fahrzeuglängen, Annahme Fahrzeugpunkt ist im Mittelpunkt!
-            # ego_s = ego_s + 4.508 / 2
-            # lead_s = lead_s - 4.508 / 2
-
             dhw = np.round(lead_s - ego_s, 2)
             thw = np.round(dhw / ego_obs["v"], 4)
 
@@ -382,8 +378,8 @@ class SimulationCore:
             self._cr_renderer.static_artists.append(id_label)
 
         # To draw the road boundaries used to calculate off-road
-        # self._road_inclusion_polygon_group.draw(self._cr_renderer)
-        # self._road_boundary_collision_object.draw(self._cr_renderer)
+        # self._road_inclusion_polygon_group.draw(self._cr_renderer)  # noqa: ERA001
+        # self._road_boundary_collision_object.draw(self._cr_renderer)  # noqa: ERA001
 
         # Set plot limits; TODO: Adapt to road width
         visible_range_ego_x = 300
@@ -402,11 +398,7 @@ class SimulationCore:
 
         plot_lims = [local_xmin, local_xmax, local_ymin, local_ymax]
 
-        # fsize = (6, 6 * (visible_range_ego_y / visible_range_ego_x))
         fsize = (9, 9)
-
-        # plot_lims = (-100, 1100, -10, 10)
-        # fsize= None
 
         if debug_image:
             filename = "test.jpg"

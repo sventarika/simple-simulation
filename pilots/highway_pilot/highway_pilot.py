@@ -55,7 +55,7 @@ class HighwayPilot(Pilot):
 
         # Subfunctions
         self._lanelet_wrapper = None
-        self._mpc_controller = AdvancedMpcController(self._dt, silent=True)
+        self._mpc_controller = MpcController(self._dt, silent=True)
 
         # Monitoring
         self._additional_monitoring_values = {}
@@ -364,7 +364,6 @@ class HighwayPilot(Pilot):
         dx_min_left_lane_free = 70
 
         # This is for disallowing LCs at the beginning of the simulation. Needed?
-        # time_out_beginning  = 13
 
         dx_limit_side = 10
         THW_limit_side = 1
@@ -380,7 +379,6 @@ class HighwayPilot(Pilot):
                 return 0
 
         # If velocity is too small, no lane change shall be performed
-        # TODO: relevant?
 
         # Lane change check
         delta_ref_v = ref_velocity - ego_v
@@ -700,8 +698,6 @@ class HighwayPilot(Pilot):
         additional_values = self.additional_monitoring_values
 
         # Simulation monitoring
-        # observations = scenario_simulator.observation_list  # one more than actions, last can be dropped
-        # actions_in_env = scenario_simulator.action_list
 
         # Derive values
         ref_trajectory = np.array(additional_values["ref_trajectory"])[:, 0, :]
