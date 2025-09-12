@@ -1,8 +1,8 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/docker-existing-dockerfile
 {
-	"name": "simulation-manager",
-	"image": "gitlab.ika.rwth-aachen.de:5050/fb-fi/simulation/simple-simulation/simulation-manager:2.1.4",
+	"name": "simple-simulation",
+	"image": "gitlab.ika.rwth-aachen.de:5050/fb-fi/simulation/simple-simulation/simple-simulation:1.0.0",
 
 	"runArgs": [
         "--net=host"
@@ -10,8 +10,8 @@
 
 	"containerUser": "devcontaineruser",
 
-	"workspaceMount": "source=${localWorkspaceFolder},target=/work/simulation-manager,type=bind",
-	"workspaceFolder": "/work/simulation-manager",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/work/simple-simulation,type=bind",
+	"workspaceFolder": "/work/simple-simulation",
 
 	"customizations": {
 		"vscode": {

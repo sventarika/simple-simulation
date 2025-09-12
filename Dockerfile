@@ -1,7 +1,7 @@
 FROM gitlab.ika.rwth-aachen.de:5050/fb-fi/misc/opencv-docker/ubuntu-20.04-opencv-4.8.0.76
 
-RUN mkdir -p /work/simulation-manager
-WORKDIR /work/simulation-manager
+RUN mkdir -p /work/simple-simulation
+WORKDIR /work/simple-simulation
 
 # Install CoinHSL, see: https://github.com/coin-or-tools/ThirdParty-HSL
 RUN apt-get update && \
@@ -23,9 +23,4 @@ COPY requirements.txt .
 RUN python -m pip install -r requirements.txt
 
 # Add all modules to pythonpath
-ENV PYTHONPATH=$PYTHONPATH:/work/simulation-manager
-ENV PYTHONPATH=$PYTHONPATH:/work/simulation-manager/submodules/pilots
-ENV PYTHONPATH=$PYTHONPATH:/work/simulation-manager/submodules/lanelet-network-wrapper
-ENV PYTHONPATH=$PYTHONPATH:/work/simulation-manager/submodules/mpc-controller
-ENV PYTHONPATH=$PYTHONPATH:/work/simulation-manager/submodules/simulation-core
-ENV PYTHONPATH=$PYTHONPATH:/work/simulation-manager/submodules/simple-scenario
+ENV PYTHONPATH=$PYTHONPATH:/work/simple-simulation
