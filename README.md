@@ -1,54 +1,62 @@
-# simple-scenario
+# simple-simulation
 
-## Initial setup
+Execute simulation runs defined by [simple-scenario](https://github.com/ika-rwth-aachen/simple-scenario) for testing prototype automated driving systems and developing test scenario selection algorithms.
 
-:bulb: You should use Linux, have docker installed, and have your ssh key set up.
+## Install
 
-1. Set up your GPG key and configure VSCode by going through the instructions in [vscode-docker-example](https://gitlab.ika.rwth-aachen.de/lva/vscode-docker-example).
-
-2. Clone this repository.
+To use or develop `simple-simulation`, you must first clone the repository.
 
 ```bash
-git clone git@gitlab.ika.rwth-aachen.de:fb-fi/simulation/simple-simulation/simulation-manager.git
+$ git clone git@gitlab.ika.rwth-aachen.de:fb-fi/simulation/simple-simulation/simple-simulation.git
+$ cd simple-simulation
 ```
 
-3. Change directory.
+It is recommended to use [uv](https://docs.astral.sh/uv/getting-started/installation/) for package management and usage (see [With uv](#with-uv)).
+If needed, this repository also comes with a `Dockerfile` for execution in docker containers (see [With docker](#with-docker)).
+
+### With uv
+
+Install requirements with
 
 ```bash
-cd simulation-manager
+$ uv sync
 ```
 
-4. Initialize submodules
+To run a script, use
+
 ```bash
-git submodule init
+$ uv run /path/to/script.py
 ```
 
-5. Update submodules
+or directly use the python interpreter from the `.venv` folder in e.g. VSCode.
+
+To run the tests, install the dev requirements with
+
 ```bash
-git submodule update --depth 1
+$ uv sync --dev
 ```
 
-## Open the repository
+and run the tests
 
-1. Open the folder in VSCode (`Ctrl + K, Ctrl + O`)
+```bash
+$ uv run pytest
+```
 
-2. Open the folder in a dev container (`Ctrl+Shift+P`: `Dev Containers: Rebuild and reopen in container`)
+### With docker
 
-    You are probably asked for your gpg key password and it may take some time afterwards, because the docker image is downloaded from gitlab.
+1. Build docker image
 
-3. After you entered the dev container, you may have to accept the unsecure git subrepos (pop-up in the lower right corner, only relevant when being `root` in the devcontainer)
+    ```bash
+    docker build --rm -t gitlab.ika.rwth-aachen.de:5050/fb-fi/simulation/simple-simulation/simple-simulation:1.0.0 .
+    ```
 
-## Run some simulations
+2. Make sure that the docker image version specified in the `.devcontainer/devcontainer.json` matches the built docker image.
 
-:bulb: You should first complete the initial setup.
+3. Open the folder in VSCode (`Ctrl + K, Ctrl + O`)
 
-1. Open the file `test/test_challenger_a.py` and run it by clicking on the run arrow in the top right corner.
+4. Open the folder in a dev container (`Ctrl+Shift+P`: `Dev Containers: Rebuild and reopen in container`)
 
-2. There should be some videos in the folder `test/test_results/challenger_a/`.
-
-You can watch them directly in VSCode.
-
-## Use CoinHSL MA27 linear solver (optional)
+(Optional) Use CoinHSL MA27 linear solver
 
 Much faster than the standard one, but protected by personal license.
 
@@ -64,23 +72,27 @@ Much faster than the standard one, but protected by personal license.
 
 4. Adapt used dockerfile in `.devcontainer/devcontainer.json` to the new docker image.
 
-**WARNING**: Do not upload that docker image, because the HSL Archive License permits redistribution!
+**WARNING**: Do not upload that docker image to gitlab, because the HSL Archive License permits redistribution!
 
-# Submodules
+# Use
 
-## mpc-controller
+:bulb: You should first complete the [Installation](#install).
 
-MPC controller used by `pilots` in `simple-simulation`.
+Run some simulations
 
-## pilots
+1. Open the file `test/test_challenger_a.py` and run it by clicking on the run arrow in the top right corner.
 
-Pilots for the `simple-simulation`.
+2. There should be some videos in the folder `test/test_results/challenger_a/`.
 
-## simulation-core
+You can watch them directly in VSCode.
 
-The lightweight simulation core for the `simple-simulation`.
-Based on the [CommonRoad vehicle models](https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models).
+# Dev
 
-## simulation-manager
+The following lists the main idea of the modules:
 
-Main module managing simple-simulation simulation runs.
+:bulb: For more details of the interaction between the different modules, please read [#1](https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/simple-simulation/-/issues/1).
+
+* `simulation_manager/`: Main module handling all other modules to run the main simulation loop. (Previous and deprecated repo: [simulation-manager](https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/simulation-manager))
+* `pilots/`: Pilots for the simulation actors. A pilot takes high-level decisions for lateral and longitudinal control for exactly one simulation actor based on the current situation in the simulation. Each pilot must be a subclass of `Pilot` in `pilots/pilot.py`. (The previous and deprecated repo [pilots](https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/pilots/-/tree/hidrive-models?ref_type=heads) contains the pilots used for the Hi-Drive safety impact assessment simulations).
+* `mpc_controller/`: An mpc controller that is used by the `HighwayPilot` (and the Hi-Drive pilots) for making sure that the controlled vehicle will follow the reference trajectory. (Previous and deprecated repo [mpc-controller](https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/mpc-controller) contains more mpc controller versions and some scripts testing different CommonRoad models and MPC configurations. The currently used `MpcController` is named `AdvancedMpcController` there!).
+* `simulation_core/*: The lightweight simulation core using [CommonRoad vehicle models](https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models). In a perfect world, this can be swapped with an interface to esmini, VTD, Carla and all other modules can be still be used.
