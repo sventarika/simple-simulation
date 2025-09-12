@@ -8,8 +8,8 @@ from loguru import logger
 from typing import TYPE_CHECKING
 
 from simple_scenario import LaneletNetworkWrapper
-from mpc_controller.mpc_controller import MpcController
 
+from ..mpc_controller import MpcController
 from ..pilot import Pilot
 
 if TYPE_CHECKING:
