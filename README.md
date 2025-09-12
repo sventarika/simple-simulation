@@ -2,6 +2,15 @@
 
 Execute simulation runs defined by [simple-scenario](https://github.com/ika-rwth-aachen/simple-scenario) for developing test scenario selection algorithms and testing prototype automated driving systems.
 
+# Notice
+
+> [!IMPORTANT]
+> This repository is open-sourced and maintained by the [**Institute for Automotive Engineering (ika) at RWTH Aachen University**](https://www.ika.rwth-aachen.de/).
+> We cover a wide variety of research topics within our [*Vehicle Intelligence & Automated Driving*](https://www.ika.rwth-aachen.de/en/competences/fields-of-research/vehicle-intelligence-automated-driving.html) domain.
+> If you would like to learn more about how we can support your automated driving or robotics efforts, feel free to reach out to us!
+> :email: ***opensource@ika.rwth-aachen.de***
+
+
 # Install
 
 To use or develop `simple-simulation`, you must first clone the repository.
