@@ -46,9 +46,11 @@ $ uv run pytest
 
 1. Build docker image
 
-    ```bash
-    docker build --rm -t gitlab.ika.rwth-aachen.de:5050/fb-fi/simulation/simple-simulation/simple-simulation:1.0.0 .
-    ```
+```bash
+$ docker build --rm -t gitlab.ika.rwth-aachen.de:5050/fb-fi/simulation/simple-simulation/simple-simulation:1.0.0 .
+```
+
+:bulb: The docker image is based on an image from [opencv-docker](https://gitlab.ika.rwth-aachen.de/fb-fi/misc/opencv-docker), because the opencv version from PyPi does not included the codec needed to watch videos generated with opencv directly in VSCode or any web browser (i.e., also not in GitLab issues).
 
 2. Make sure that the docker image version specified in the `.devcontainer/devcontainer.json` matches the built docker image.
 
@@ -66,9 +68,9 @@ Much faster than the standard one, but protected by personal license.
 
 3. Build local dockerfile using the following command
 
-    ```bash
-    docker build --rm -t gitlab.ika.rwth-aachen.de:5050/fb-fi/simulation/simple-simulation/simulation-manager:2.1.4-coinhsl .
-    ```
+```bash
+$ docker build --rm -t gitlab.ika.rwth-aachen.de:5050/fb-fi/simulation/simple-simulation/simulation-manager:2.1.4-coinhsl .
+```
 
 4. Adapt used dockerfile in `.devcontainer/devcontainer.json` to the new docker image.
 
