@@ -31,12 +31,7 @@ test_no_extras:
         - source $HOME/.local/bin/env
         - uv sync --dev
     script:
-        - uv run pytest --junitxml=report.xml \
-         --cov=mpc_controller \
-         --cov=pilots \
-         --cov=simulation_core \
-         --cov=simulation_manager \
-         --cov-report=xml --cov-report=html --cov-report=term-missing test
+        - uv run pytest --junitxml=report.xml --cov=mpc_controller --cov=pilots --cov=simulation_core --cov=simulation_manager --cov-report=xml --cov-report=html --cov-report=term-missing test
         - uv run pycobertura show --format html --output coverage_cobertura.html coverage.xml
     artifacts:
         when: always
