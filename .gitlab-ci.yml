@@ -4,6 +4,7 @@ image:
 stages:
     - lint
     - test
+    - package
 
 lint:
     stage: lint
