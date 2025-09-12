@@ -1,9 +1,15 @@
 [project]
 name = "simple-simulation"
-version = "0.1.0"
-description = "Add your description here"
+authors = [
+    {name = "Lennart Vater", email = "lennart.vater@ika.rwth-aachen.de"}
+]
+maintainers = [
+    {name = "Lennart Vater", email = "lennart.vater@ika.rwth-aachen.de"}
+]
+description = "Execute simulation runs defined by simple-scenario for testing prototype automated driving systems and developing test scenario selection algorithms"
 readme = "README.md"
 requires-python = ">=3.8"
+version = "1.0.0"
 dependencies = [
     "asyncua==1.0.3",
     "commonroad-drivability-checker==2022.1",
