@@ -1,5 +1,5 @@
 image:
-    name: ubuntu:22.04
+    name: ubuntu:24.04
 
 stages:
     - lint
@@ -31,6 +31,7 @@ test:
         - curl -LsSf https://astral.sh/uv/install.sh | sh
         - source $HOME/.local/bin/env
         - uv sync --dev
+        - apt-get update && apt-get install -y libgl1  # opencv dependency
     script:
         - uv run pytest --junitxml=report.xml --cov=mpc_controller --cov=pilots --cov=simulation_core --cov=simulation_manager --cov-report=xml --cov-report=html --cov-report=term-missing test
         - uv run pycobertura show --format html --output coverage_cobertura.html coverage.xml
