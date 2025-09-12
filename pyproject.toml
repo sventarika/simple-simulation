@@ -27,7 +27,6 @@ dependencies = [
     "onnx==1.14.0",
     "opencv-python>=4.11.0.86",
     "orjson>=3.10.15",
-    "reportlab==4.2.0",
     "shapely==1.8.5.post1",
     "simple-scenario>=0.10.1",
     "tqdm>=4.67.1",

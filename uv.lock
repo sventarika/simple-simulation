@@ -409,15 +409,6 @@ wheels = [
 ]
 
 [[package]]
-name = "chardet"
-version = "5.2.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/f3/0d/f7b6ab21ec75897ed80c17d79b15951a719226b9fababf1e40ea74d69079/chardet-5.2.0.tar.gz", hash = "sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7", size = 2069618 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/38/6f/f5fbc992a329ee4e0f288c1fe0e2ad9485ed064cac731ed2fe47dcc38cbf/chardet-5.2.0-py3-none-any.whl", hash = "sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970", size = 199385 },
-]
-
-[[package]]
 name = "charset-normalizer"
 version = "3.4.3"
 source = { registry = "https://pypi.org/simple" }
@@ -3860,20 +3851,6 @@ wheels = [
 ]
 
 [[package]]
-name = "reportlab"
-version = "4.2.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "chardet" },
-    { name = "pillow", version = "10.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
-    { name = "pillow", version = "11.3.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/b1/29/a8c6969122a54b8c2c5235e0f7069d2351c06405a09349b55efdc4cb0a08/reportlab-4.2.0.tar.gz", hash = "sha256:474fb28d63431a5d47d75c90d580393050df7d491a09c7877df3291a2e9f6d0a", size = 3688649 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/37/f6/b53001d1d0ad4c19d038a7588a7271de9a351f8c5b9e1cbaa45164eb7245/reportlab-4.2.0-py3-none-any.whl", hash = "sha256:53630f9d25a7938def3e6a93d723b72a7a5921d34d23cf7a0930adeb2cb0e6c1", size = 1941898 },
-]
-
-[[package]]
 name = "requests"
 version = "2.32.4"
 source = { registry = "https://pypi.org/simple" }
@@ -4568,7 +4545,6 @@ dependencies = [
     { name = "opencv-python" },
     { name = "orjson", version = "3.10.15", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "orjson", version = "3.11.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
-    { name = "reportlab" },
     { name = "shapely" },
     { name = "simple-scenario" },
     { name = "tqdm" },
@@ -4605,7 +4581,6 @@ requires-dist = [
     { name = "onnx", specifier = "==1.14.0" },
     { name = "opencv-python", specifier = ">=4.11.0.86" },
     { name = "orjson", specifier = ">=3.10.15" },
-    { name = "reportlab", specifier = "==4.2.0" },
     { name = "shapely", specifier = "==1.8.5.post1" },
     { name = "simple-scenario", specifier = ">=0.10.1" },
     { name = "tqdm", specifier = ">=4.67.1" },
