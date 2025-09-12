@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "simple-simulation"
 authors = [
@@ -8,8 +12,9 @@ maintainers = [
 ]
 description = "Execute simulation runs defined by simple-scenario for testing prototype automated driving systems and developing test scenario selection algorithms"
 readme = "README.md"
+license = {text = "MIT"}
 requires-python = ">=3.8"
-version = "1.0.0"
+version = "0.1.0"
 dependencies = [
     "asyncua==1.0.3",
     "commonroad-drivability-checker==2022.1",
@@ -27,11 +32,38 @@ dependencies = [
     "simple-scenario>=0.10.1",
     "tqdm>=4.67.1",
 ]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering",
+]
 
 [dependency-groups]
 dev = [
     "pytest>=8.3.5",
     "ruff>=0.13.0",
+]
+build = [
+    "build>=1.2.2.post1",
+    "twine>=6.1.0",
+]
+
+[tool.setuptools]
+packages = [
+    "mpc_controller",
+    "pilots",
+    "pilots.highway_pilot",
+    "simulation_core",
+    "simulation_manager",
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra"
+testpaths = [
+    "test",
 ]
 
 [tool.ruff]

@@ -23,7 +23,7 @@ lint:
         when: always
         expire_in: '30 days'
 
-test_no_extras:
+test:
     stage: test
     before_script:
         - apt-get update && apt-get install -y curl build-essential clang
@@ -45,4 +45,17 @@ test_no_extras:
             - coverage.xml
             - htmlcov
             - coverage_cobertura.html
-            - test/test_simple_scenario/results/test_openx_export
+
+package:
+    stage: package
+    only:
+        - tags
+    before_script:
+        - apt-get update && apt-get install -y curl build-essential clang
+        - curl -LsSf https://astral.sh/uv/install.sh | sh
+        - source $HOME/.local/bin/env
+        - uv sync --all-extras --group=build
+    script:
+        - uv run -m build
+        - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token uv run -m twine upload --verbose --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
+    rules:
