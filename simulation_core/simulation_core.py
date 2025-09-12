@@ -561,6 +561,9 @@ class SimulationCore:
 
                 codec = "avc1"  # generated videos can be watched in a web browser or in VSCode, but not in default opencv installation (need to build opencv from sources); if you use default opencv installation, use "mp4v" instead, because with "avc1" no video will be created at all
 
+                # Delete old video
+                video_file.unlink(missing_ok=True)
+
                 while not video_file.exists():
 
                     self._video_writer = cv2.VideoWriter(
