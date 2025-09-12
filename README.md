@@ -87,7 +87,6 @@ The following lists the main idea of the modules:
 
 * `simulation_manager/`: Main module handling all other modules to run the main simulation loop.
 * `pilots/`: Pilots for the simulation actors. A pilot takes high-level decisions for lateral and longitudinal control for exactly one simulation actor based on the current situation in the simulation. Each pilot must be a subclass of `Pilot` in `pilots/pilot.py`.
-* `pilots/mpc_controller.py`: An mpc controller that is used by the `HighwayPilot` for making sure that the controlled vehicle will follow the reference trajectory.
 * `simulation_core/`: The lightweight simulation core using [CommonRoad vehicle models](https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models).
 
 # Acknowledgements
