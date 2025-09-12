@@ -55,7 +55,6 @@ build = [
 
 [tool.setuptools]
 packages = [
-    "mpc_controller",
     "pilots",
     "pilots.highway_pilot",
     "simulation_core",
