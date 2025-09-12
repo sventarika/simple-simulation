@@ -9,8 +9,8 @@ from typing import TYPE_CHECKING
 
 from simple_scenario import LaneletNetworkWrapper
 
-from ..mpc_controller import MpcController
-from ..pilot import Pilot
+from .mpc_controller import MpcController
+from .pilot import Pilot
 
 if TYPE_CHECKING:
     from pathlib import Path

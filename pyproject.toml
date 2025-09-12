@@ -56,7 +56,6 @@ build = [
 [tool.setuptools]
 packages = [
     "pilots",
-    "pilots.highway_pilot",
     "simulation_core",
     "simulation_manager",
 ]
