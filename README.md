@@ -1,6 +1,6 @@
 # simple-simulation
 
-Execute simulation runs defined by [simple-scenario](https://github.com/ika-rwth-aachen/simple-scenario) for testing prototype automated driving systems and developing test scenario selection algorithms.
+Execute simulation runs defined by [simple-scenario](https://github.com/ika-rwth-aachen/simple-scenario) for developing test scenario selection algorithms and testing prototype automated driving systems.
 
 ## Install
 
