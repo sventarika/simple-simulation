@@ -13,14 +13,6 @@ from vehiclemodels.parameters_vehicle2 import parameters_vehicle2
 if TYPE_CHECKING:
     import casadi.tools as castools
 
-# Check whether MA27 should be used
-USE_MA27 = False
-from pathlib import Path  # noqa: E402
-
-success_file = Path("/work/build/.success")
-if success_file.exists() and success_file.is_file():
-    USE_MA27 = True
-
 
 class MpcController:
     def __init__(
@@ -35,13 +27,13 @@ class MpcController:
         use_ma27: bool = False,
     ) -> None:
         """
-        use_ma27: Whether to use MA27 as the linear solver. (Requires previous setup of HSL library, see simulation-manager README.)
+        use_ma27: Whether to use MA27 as the linear solver. (Requires previous setup of HSL library.)
         """
 
         # Debug parameters
         self._log_predictions = True
         self._silent = silent
-        self._use_ma27 = use_ma27 or USE_MA27
+        self._use_ma27 = use_ma27
 
         # Parameters
         # General
