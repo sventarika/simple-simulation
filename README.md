@@ -2,7 +2,7 @@
 
 Execute simulation runs defined by [simple-scenario](https://github.com/ika-rwth-aachen/simple-scenario) for developing test scenario selection algorithms and testing prototype automated driving systems.
 
-## Install
+# Install
 
 To use or develop `simple-simulation`, you must first clone the repository.
 
@@ -11,10 +11,9 @@ $ git clone git@gitlab.ika.rwth-aachen.de:fb-fi/simulation/simple-simulation/sim
 $ cd simple-simulation
 ```
 
-It is recommended to use [uv](https://docs.astral.sh/uv/getting-started/installation/) for package management and usage (see [With uv](#with-uv)).
-If needed, this repository also comes with a `Dockerfile` for execution in docker containers (see [With docker](#with-docker)).
+It is recommended to use [uv](https://docs.astral.sh/uv/getting-started/installation/) for package management. If you do not want to use `uv`, please consult the [Without uv](#without-uv) section.
 
-### With uv
+## With uv
 
 Install requirements with
 
@@ -42,40 +41,25 @@ and run the tests
 $ uv run pytest
 ```
 
-### With docker
+## Without uv
 
-1. Build docker image
-
-```bash
-$ docker build --rm -t gitlab.ika.rwth-aachen.de:5050/fb-fi/simulation/simple-simulation/simple-simulation:0.1.0 .
-```
-
-:bulb: The docker image is based on an image from [opencv-docker](https://gitlab.ika.rwth-aachen.de/fb-fi/misc/opencv-docker), because the opencv version from PyPi does not included the codec needed to watch videos generated with opencv directly in VSCode or any web browser (i.e., also not in GitLab issues).
-
-2. Make sure that the docker image version specified in the `.devcontainer/devcontainer.json` matches the built docker image.
-
-3. Open the folder in VSCode (`Ctrl + K, Ctrl + O`)
-
-4. Open the folder in a dev container (`Ctrl+Shift+P`: `Dev Containers: Rebuild and reopen in container`)
-
-(Optional) Use CoinHSL MA27 linear solver
-
-Much faster than the standard one, but protected by personal license.
-
-1. Request HSL Archive License [here](https://licences.stfc.ac.uk/product/coin-hsl-archive) and download the `coinhsl-archive-2022.12.02.tar.gz` tarball.
-
-2. Place `coinhsl-archive-2022.12.02.tar.gz` into the `coinhsl/` folder.
-
-3. Build local dockerfile using the following command
+Install the project editable
 
 ```bash
-$ docker build --rm -t gitlab.ika.rwth-aachen.de:5050/fb-fi/simulation/simple-simulation/simulation-manager:0.1.0-coinhsl .
+$ python -m pip install -e .
 ```
 
-4. Adapt used dockerfile in `.devcontainer/devcontainer.json` to the new docker image.
+To run the tests, first install pytest
 
-**WARNING**: Do not upload that docker image to gitlab, because the HSL Archive License permits redistribution!
+```bash
+$ python -m pip install pytest
+```
 
+and run
+
+```bash
+$ pytest
+```
 # Use
 
 :bulb: You should first complete the [Installation](#install).
@@ -92,9 +76,21 @@ You can watch them directly in VSCode.
 
 The following lists the main idea of the modules:
 
-:bulb: For more details of the interaction between the different modules, please read [#1](https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/simple-simulation/-/issues/1).
-
 * `simulation_manager/`: Main module handling all other modules to run the main simulation loop. (Previous and deprecated repo: [simulation-manager](https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/simulation-manager))
 * `pilots/`: Pilots for the simulation actors. A pilot takes high-level decisions for lateral and longitudinal control for exactly one simulation actor based on the current situation in the simulation. Each pilot must be a subclass of `Pilot` in `pilots/pilot.py`. (The previous and deprecated repo [pilots](https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/pilots/-/tree/hidrive-models?ref_type=heads) contains the pilots used for the Hi-Drive safety impact assessment simulations).
 * `pilots/mpc_controller.py`: An mpc controller that is used by the `HighwayPilot` (and the Hi-Drive pilots) for making sure that the controlled vehicle will follow the reference trajectory. (Previous and deprecated repo [mpc-controller](https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/mpc-controller) contains more mpc controller versions and some scripts testing different CommonRoad models and MPC configurations. The currently used `MpcController` is named `AdvancedMpcController` there!).
 * `simulation_core/`: The lightweight simulation core using [CommonRoad vehicle models](https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models). In a perfect world, this can be swapped with an interface to esmini, VTD, Carla and all other modules can be still be used.
+
+# Acknowledgements
+
+This package is developed as part of the [Hi-Drive project](https://www.hi-drive.eu).
+
+<!-- <img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/Hi_Drive_Logo_Claim_rgb.svg" style="width:2in" /> -->
+<img src="assets/Hi_Drive_Logo_Claim_rgb.svg" style="width:2in" />
+
+The research leading to these results has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 101006664.
+The sole responsibility of this publication lies with the authors.
+The authors would like to thank all partners within the Hi-Drive project (hi-drive.eu) for their cooperation and valuable contribution.
+
+<!-- <img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/funded_by_eu.svg" style="width:4in" /> -->
+<img src="assets/funded_by_eu.svg" style="width:4in" />
