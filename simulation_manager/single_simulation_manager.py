@@ -72,7 +72,6 @@ class SingleSimulationManager:
         self._log_info(f"Simulate scenario: {self.scenario_name}")
 
         # Set up simulation core that is responsible for vehicle dynamic simulation
-        # TODO: use simple scenario file and specifiy the models there; input here is maybe simplescenario file or a list of needed agents?
         simulation_core = SimulationCore(
             self._scenario,
             live_plot=self._live_plot,
@@ -85,7 +84,8 @@ class SingleSimulationManager:
 
         # Assign pilots to actors
         dt = obs["general"]["dt"]
-        # TODO: use simple scenario file and specifiy the pilots there.
+        # TODO(vater): Use some kind of config to assign pilots instead of hardcoding
+        # https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/simple-simulation/-/issues/1
         pilots = {}
         for obj_id in obs["dynamic_objects"]:
             if obj_id == "ego":

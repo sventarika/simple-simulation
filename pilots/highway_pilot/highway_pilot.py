@@ -512,8 +512,8 @@ class HighwayPilot(Pilot):
             self._aeb_counter = 0.0
             self._aeb_drac = 0.0
 
-    def _check_lane_change(
-        self,  # noqa: PLR0912, PLR0911
+    def _check_lane_change(  # noqa: PLR0912, PLR0911
+        self,
         ego_x: float,
         ego_y: float,
         ego_length: float,

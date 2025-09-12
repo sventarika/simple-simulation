@@ -263,8 +263,8 @@ class MpcController:
 
         # Define a function that updates the time-varying parameters to the current trajectory
         def tvp_fun(
-            t_now: float,
-        ) -> castools.structure3.SXStruct | castools.structure3.MXStruct:  # noqa: ARG001
+            t_now: float,  # noqa: ARG001
+        ) -> castools.structure3.SXStruct | castools.structure3.MXStruct:
             for k in range(self.n_horizon):
                 tvp_template["_tvp", k, "p_x_set"] = self._reference_values["p_x"][
                     k

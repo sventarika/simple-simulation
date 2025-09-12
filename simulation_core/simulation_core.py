@@ -34,7 +34,7 @@ class SimulationCore:
 
     def __init__(
         self,
-        scenario_file: str,
+        scenario_or_config: str | Path | dict | Scenario,
         live_plot: bool = False,
         write_video_path: str | None = None,
         write_video_fps: float = 40.0,
@@ -48,7 +48,7 @@ class SimulationCore:
 
         self._i_job = i_job
 
-        self._scenario_file = scenario_file
+        self._scenario_or_config = scenario_or_config
 
         # Lazy loading to allow initialization of many SimulationCores before starting the simulation.
         self._scenario_name = None
@@ -102,7 +102,7 @@ class SimulationCore:
             self._video_writer.release()
 
         # Load simple scenario (lazy loading)
-        simple_scenario = Scenario.from_x(self._scenario_file)
+        simple_scenario = Scenario.from_x(self._scenario_or_config)
 
         # Extract common road (CR) scenario (that is built up automatically inside of the simple scenario), because the simulation needs a CR scenario
         self._scenario_name = simple_scenario.id
@@ -205,9 +205,9 @@ class SimulationCore:
                 theta=dobj.initial_state.orientation,
             )
 
-            dynamics_model = (
-                "traj"  # "cr"  # TODO: needs to be specified in SimpleScenario file...
-            )
+            # TODO(vater): Use some kind of config to assign VehicleDynamicModels instead of hardcoding (keep Pilots in mind as well)
+            # https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/simple-simulation/-/issues/1
+            dynamics_model = "traj"  # "cr"
 
             if dynamics_model == "cr":
                 object_vehicle_dynamics_object = CommonRoadVehicleModel(

@@ -55,7 +55,8 @@ class TestBaNeunzig:
         )
 
         # Evaluate test result
-        # TODO: Take ChallengeDescription instead!
+        # TODO(vater): Take information from ChallengeDescription instead of the hardcoded json to get the expected_termination_reason and limits.
+        # https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/simple-simulation/-/issues/2
         scenario_description = {
             "expected_termination_reason": self.EXPECTED_TERMINATION_REASONS[
                 scenario_name
@@ -135,7 +136,8 @@ class TestBaNeunzig:
                 scenario_limits = json.load(f)
 
             # Evaluate test result
-            # TODO: Take ChallengeDescription instead!
+            # TODO(vater): Take information from ChallengeDescription instead of the hardcoded json.
+            # https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/simple-simulation/-/issues/2
             scenario_description = {
                 "expected_termination_reason": self.EXPECTED_TERMINATION_REASONS[
                     scenario_name

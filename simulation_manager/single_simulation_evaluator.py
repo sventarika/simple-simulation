@@ -35,10 +35,10 @@ class SingleSimulationEvaluator:
             self._scenario.get_cr_interface().lanelet_network_wrapper
         )
 
-        # Read scenario description (TODO: Replace by ChallengeDescription)
-        self._scenario_speed_limit = (
-            self._scenario.road.speed_limit
-        )  # TODO: Read from ChallengeDescription (isn"t it a limit?)
+        # Read scenario description
+        # TODO(vater): Take information from ChallengeDescription instead of the hardcoded json.
+        # https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/simple-simulation/-/issues/2
+        self._scenario_speed_limit = self._scenario.road.speed_limit
         self._scenario_limits = scenario_description["scenario_limits"]
         self._operation_mode = self._scenario_limits["category"]
         self._operation_mode_mapping = {
@@ -765,7 +765,6 @@ class SingleSimulationEvaluator:
         # Delete saved plots
         for f in self._result_dir.glob("*.png"):
             f.unlink()
-        # logger.info(f"Deleted file: {f}")
 
         # Write sucess criteria to json file (ALL)
         output = {
