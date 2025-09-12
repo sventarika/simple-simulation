@@ -559,13 +559,24 @@ class SimulationCore:
                 if not video_dir.exists():
                     video_dir.mkdir(parents=True)
 
-                self._video_writer = cv2.VideoWriter(
-                    str(video_file),
-                    cv2.VideoWriter_fourcc(*"avc1"),
-                    self._video_fps,
-                    (int(self._video_shape[1]), int(self._video_shape[0])),
-                    True,
-                )
+                codec = "avc1"  # generated videos can be watched in a web browser or in VSCode, but not in default opencv installation (need to build opencv from sources); if you use default opencv installation, use "mp4v" instead, because with "avc1" no video will be created at all
+
+                while not video_file.exists():
+
+                    self._video_writer = cv2.VideoWriter(
+                        str(video_file),
+                        cv2.VideoWriter_fourcc(*codec),  # avc1 for webvideos
+                        self._video_fps,
+                        (int(self._video_shape[1]), int(self._video_shape[0])),
+                        True,
+                    )
+
+                    if codec == "mp4v" and not video_file.exists():
+                        msg = "Tried to use codec 'mp4v' after 'avc1', but both did not work."
+                        raise RuntimeError(msg)
+
+                    codec = "mp4v"
+
             if self._video_shape != render_frame.shape[:2]:
                 raise Exception
 
