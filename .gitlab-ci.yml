@@ -1,5 +1,5 @@
 image:
-    name: ubuntu:24.04
+    name: ubuntu:22.04
 
 stages:
     - lint
