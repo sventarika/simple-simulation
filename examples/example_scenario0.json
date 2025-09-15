@@ -1,0 +1,28 @@
+{
+  "scenario_id": "example_scenario0",
+  "road": {
+    "n_lanes": 3,
+    "lane_width": 3.75,
+    "segments": [
+      {
+        "length": 400,
+        "heading": 0.0
+      }
+    ],
+    "speed_limit": 120,
+    "goal_position": 350,
+    "x0": 0,
+    "y0": 0
+  },
+  "ego_configuration": {
+    "lanelet_id": 1000,
+    "s0": 50,
+    "t0": 0,
+    "v0": 27.78,
+    "vehicle_type_name": "medium"
+  },
+  "vehicles": [
+  ],
+  "duration": 10,
+  "dt": 0.1
+}

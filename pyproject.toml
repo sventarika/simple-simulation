@@ -157,6 +157,7 @@ ignore = [
 "__init__.py" = ["F401"]
 "test/*.py" = ["F841", "S101", "T201", "ANN"]
 "simple_simulation/pilots/highway_pilot.py" = ["N806"]
+"examples/generate_simulation_run_videos.py" = ["INP001"]
 
 [tool.coverage.report]
 exclude_also = [

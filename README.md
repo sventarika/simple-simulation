@@ -2,6 +2,52 @@
 
 Execute simulation runs defined by [simple-scenario](https://github.com/ika-rwth-aachen/simple-scenario) for developing scenario-based testing methods (e.g., selecting test scenarios or testing prototype automated driving systems).
 
+# Examples
+
+:bulb: *To recreate these videos use: `examples/generate_simulation_run_videos.py`.*
+
+## Free driving test scenario
+
+`examples/example_scenario0.json`
+
+Test scenario:
+
+<img src="assets/example_scenario0.gif">
+
+Simulation run:
+
+<img src="assets/example_scenario0_simulation_run.gif">
+
+Result: `is_goal_reached`
+
+## Deceleration test scenario
+
+`examples/example_scenario1.json`
+
+Test scenario:
+
+<img src="assets/example_scenario1.gif">
+
+Simulation run:
+
+<img src="assets/example_scenario1_simulation_run.gif">
+
+Result: `is_standstill`
+
+## Cut-in test scenario
+
+`examples/example_scenario2.json`
+
+Test scenario:
+
+<img src="assets/example_scenario2.gif">
+
+Simulation run:
+
+<img src="assets/example_scenario2_simulation_run.gif">
+
+Result: `is_collision`
+
 # Notice
 
 > [!IMPORTANT]
