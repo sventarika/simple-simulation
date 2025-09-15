@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 
-from simulation_manager import MultiSimulationManager
+from simple_simulation.simulation_manager import MultiSimulationManager
 
 from test.check_test_result_format import check_test_result_format
 

@@ -54,9 +54,10 @@ build = [
 
 [tool.setuptools]
 packages = [
-    "pilots",
-    "simulation_core",
-    "simulation_manager",
+    "simple_simulation",
+    "simple_simulation.pilots",
+    "simple_simulation.simulation_core",
+    "simple_simulation.simulation_manager",
 ]
 
 [tool.pytest.ini_options]
@@ -155,7 +156,7 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 "test/*.py" = ["F841", "S101", "T201", "ANN"]
-"pilots/highway_pilot.py" = ["N806"]
+"simple_simulation/pilots/highway_pilot.py" = ["N806"]
 
 [tool.coverage.report]
 exclude_also = [

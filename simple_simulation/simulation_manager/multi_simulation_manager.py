@@ -5,11 +5,11 @@ import orjson
 
 from loguru import logger
 from pathlib import Path
+from simple_scenario import Scenario
 from time import process_time
 from tqdm import tqdm
 
-from simple_scenario import Scenario
-from simulation_manager import SingleSimulationManager
+from .single_simulation_manager import SingleSimulationManager
 
 
 class MultiSimulationManager:

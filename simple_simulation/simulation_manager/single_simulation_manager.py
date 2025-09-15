@@ -4,15 +4,16 @@ import numpy as np
 import orjson
 
 from loguru import logger
+from simple_scenario import Scenario
 from time import time
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pathlib import Path
 
-from simulation_core import SimulationCore
-from simple_scenario import Scenario
-from pilots import DummyPilot, HighwayPilot
+
+from ..simulation_core import SimulationCore
+from ..pilots import DummyPilot, HighwayPilot
 
 
 class SingleSimulationManager:

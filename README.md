@@ -83,7 +83,7 @@ You can watch them directly in VSCode.
 
 # Dev
 
-The following lists the main idea of the modules:
+The `simple_simulation` module consists of the following submodules:
 
 * `simulation_manager/`: Main module handling all other modules to run the main simulation loop.
 * `pilots/`: Pilots for the simulation actors. A pilot takes high-level decisions for lateral and longitudinal control for exactly one simulation actor based on the current situation in the simulation. Each pilot must be a subclass of `Pilot` in `pilots/pilot.py`.

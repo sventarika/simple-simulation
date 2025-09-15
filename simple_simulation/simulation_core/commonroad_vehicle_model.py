@@ -8,8 +8,7 @@ from vehiclemodels.init_mb import init_mb
 from commonroad.common.solution import VehicleModel, VehicleType
 from commonroad_dc.feasibility.vehicle_dynamics import VehicleDynamics
 
-from simulation_core.vehicle_state import VehicleState
-
+from .vehicle_state import VehicleState
 from .vehicle_dynamics_object import VehicleDynamicsObject
 
 

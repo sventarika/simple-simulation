@@ -7,6 +7,7 @@ import numpy as np
 from copy import deepcopy
 from loguru import logger
 from pathlib import Path
+from simple_scenario import Scenario
 from typing import TYPE_CHECKING
 
 from commonroad_dc import pycrcc
@@ -14,8 +15,6 @@ from commonroad_dc.boundary import boundary
 from commonroad_dc.collision.trajectory_queries.trajectory_queries import (
     obb_enclosure_polygons_static,
 )
-
-from simple_scenario import Scenario
 
 from .situation_renderer import SituationRenderer
 from .termination_status import TerminationStatus
@@ -565,7 +564,6 @@ class SimulationCore:
                 video_file.unlink(missing_ok=True)
 
                 while not video_file.exists():
-
                     self._video_writer = cv2.VideoWriter(
                         str(video_file),
                         cv2.VideoWriter_fourcc(*codec),  # avc1 for webvideos

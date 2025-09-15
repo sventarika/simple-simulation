@@ -1,4 +1,4 @@
-from simulation_manager import SingleSimulationManager
+from simple_simulation.simulation_manager import SingleSimulationManager
 
 
 def evaluate_expected_termination_reason(

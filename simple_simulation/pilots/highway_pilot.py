@@ -21,6 +21,10 @@ if TYPE_CHECKING:
 
 
 class HighwayPilot(Pilot):
+    """
+    Based on logic from: https://github.com/l3pilot/l3pilot-aeb-adf (MIT License)
+    """
+
     def __init__(
         self, dt: float = 0.1, ego_id: str | int = "ego", silent: bool = True
     ) -> None:
