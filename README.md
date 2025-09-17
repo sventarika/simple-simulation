@@ -132,7 +132,7 @@ You can watch them directly in VSCode.
 The `simple_simulation` module consists of the following submodules:
 
 * `simulation_manager/`: Main module handling all other modules to run the main simulation loop.
-* `pilots/`: Pilots for the simulation actors. A pilot takes high-level decisions for lateral and longitudinal control for exactly one simulation actor based on the current situation in the simulation. Each pilot must be a subclass of `Pilot` in `pilots/pilot.py`.
+* `pilots/`: Pilots for the simulation actors. A pilot takes high-level decisions for lateral and longitudinal control for exactly one simulation actor based on the current situation in the simulation. Each pilot must be a subclass of `Pilot` in `pilots/pilot.py`. The logic contained in `highway_pilot.py` is roughly based on that of the [l3pilot-aeb-adf](https://github.com/l3pilot/l3pilot-aeb-adf).
 * `simulation_core/`: The lightweight simulation core using [CommonRoad vehicle models](https://gitlab.lrz.de/tum-cps/commonroad-vehicle-models).
 
 # Acknowledgements
