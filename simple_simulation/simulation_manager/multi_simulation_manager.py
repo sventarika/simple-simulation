@@ -168,19 +168,3 @@ class MultiSimulationManager:
         test_result = simulation_manager.simulate()
 
         return test_result
-
-
-if __name__ == "__main__":
-    challenger_scenarios = "data/challenger_scenario_examples"
-
-    cfg = {
-        "scenario_xml_dir": "test/test_data/challenger_a/experiment1",
-        "first_scenario_idx": 0,
-        "last_scenario_idx": -1,
-        "create_monitor_plots": False,
-        "create_video": False,
-        "n_workers": 9,
-        "show_live_plot": False,
-    }
-
-    MultiSimulationManager.run(parsed_args_dict=cfg)
