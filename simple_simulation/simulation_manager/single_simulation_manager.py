@@ -85,8 +85,7 @@ class SingleSimulationManager:
 
         # Assign pilots to actors
         dt = obs["general"]["dt"]
-        # TODO(vater): Use some kind of config to assign pilots instead of hardcoding
-        # https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/simple-simulation/-/issues/1
+        # Fixed pilots for all vehicles (DummyPilot for object vehicles, HighwayPilot for ego)
         pilots = {}
         for obj_id in obs["dynamic_objects"]:
             if obj_id == "ego":

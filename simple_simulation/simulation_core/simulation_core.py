@@ -204,9 +204,8 @@ class SimulationCore:
                 theta=dobj.initial_state.orientation,
             )
 
-            # TODO(vater): Use some kind of config to assign VehicleDynamicModels instead of hardcoding (keep Pilots in mind as well)
-            # https://gitlab.ika.rwth-aachen.de/fb-fi/simulation/simple-simulation/simple-simulation/-/issues/1
-            dynamics_model = "traj"  # "cr"
+            # Fixed dynamics_model for all object vehicles
+            dynamics_model = "traj"
 
             if dynamics_model == "cr":
                 object_vehicle_dynamics_object = CommonRoadVehicleModel(
@@ -468,7 +467,7 @@ class SimulationCore:
         # self._road_inclusion_polygon_group.draw(self._cr_renderer)  # noqa: ERA001
         # self._road_boundary_collision_object.draw(self._cr_renderer)  # noqa: ERA001
 
-        # Set plot limits; TODO: Adapt to road width
+        # Set plot limits (maybe not adapted to all road widths)
         visible_range_ego_x = 300
         visible_range_ego_y = 25
 
