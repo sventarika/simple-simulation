@@ -5,10 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "simple-simulation"
 authors = [
-    {name = "Lennart Vater", email = "lennart.vater@ika.rwth-aachen.de"}
+    {name = "Lennart Vater", email = "lennart.vater@ika.rwth-aachen.de"},
+    {name = "Sven Tarlowski", email = "sven.tarlowski@ika.rwth-aachen.de"}
 ]
 maintainers = [
-    {name = "Lennart Vater", email = "lennart.vater@ika.rwth-aachen.de"}
+    {name = "Sven Tarlowski", email = "sven.tarlowski@ika.rwth-aachen.de"}
 ]
 description = "Execute simulation runs defined by simple-scenario for testing prototype automated driving systems and developing test scenario selection algorithms"
 readme = "README.md"

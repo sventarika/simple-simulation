@@ -21,7 +21,7 @@ class MpcController:
         min_thw: float = 1.6,
         min_dhw_safety: float = 3.0,
         silent: bool = False,
-        v_min: float = 3.0,
+        v_min: float = 0.0,
         v_max: float = 150 / 3.6,
         a_lim: float = 4.0,
         use_ma27: bool = False,

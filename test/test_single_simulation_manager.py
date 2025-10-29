@@ -48,6 +48,7 @@ class TestSingleSimulationManager:
     def test_export(self):
         self._evaluate(
             self.SIMPLE_SCENARIO_CONFIG_PATH,
+            None,
             self.RESULT_DIR / "test_export",
             save_result=True,
         )
@@ -55,6 +56,7 @@ class TestSingleSimulationManager:
     def test_video(self):
         self._evaluate(
             self.SIMPLE_SCENARIO_CONFIG_PATH,
+            None,
             self.RESULT_DIR / "test_video",
             save_video=True,
         )
@@ -62,6 +64,7 @@ class TestSingleSimulationManager:
     def test_monitor_pilots(self):
         self._evaluate(
             self.SIMPLE_SCENARIO_CONFIG_PATH,
+            None,
             self.RESULT_DIR / "test_monitor_pilots",
             monitor_pilots=True,
         )
