@@ -5,6 +5,7 @@ stages:
     - lint
     - test
     - package
+    - deploy
 
 lint:
     stage: lint
@@ -61,3 +62,13 @@ package:
         - uv run -m build
         - TWINE_PASSWORD=${CI_JOB_TOKEN} TWINE_USERNAME=gitlab-ci-token uv run -m twine upload --verbose --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi dist/*
     rules:
+
+deploy:
+    #Build the docker container and push to registry
+    stage: deploy
+    script:
+        - docker build -t $CI_REGISTRY_IMAGE:latest .
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker push $CI_REGISTRY_IMAGE:latest
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "CI_tests"'
