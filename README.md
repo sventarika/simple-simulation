@@ -1,5 +1,9 @@
 # simple-simulation
 
+<img src="https://github.com/ika-rwth-aachen/simple-simulation/blob/main/simple-simulation.svg?raw=True" width="400px" style="margin: 10px;">
+
+
+
 Execute simulation runs defined by [simple-scenario](https://github.com/ika-rwth-aachen/simple-scenario) to efficiently develop scenario-based testing methods (e.g., selecting test scenarios or testing prototype automated driving systems).
 
 # Examples
