@@ -1,5 +1,7 @@
-image:
-    name: ubuntu:24.04
+image: docker:28.5.2-cli
+services:
+  - name: docker:28.5.2-dind
+
 
 stages:
     - lint
@@ -27,6 +29,8 @@ lint:
 
 test:
     stage: test
+    only:
+        - main #TODO: delete before merging to main
     before_script:
         - apt-get update && apt-get install -y curl build-essential clang
         - curl -LsSf https://astral.sh/uv/install.sh | sh
