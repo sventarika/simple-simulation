@@ -188,9 +188,7 @@ class SimulationCore:
         dynamics_model = self._configuration.ego.get("dynamics_model")
 
         if dynamics_model == "cr":
-            return CommonRoadVehicleModel(
-                self._time_step, initial_ego_state, self._dt
-            )
+            return CommonRoadVehicleModel(self._time_step, initial_ego_state, self._dt)
         if dynamics_model == "traj":
             other_states = [
                 VehicleState(
