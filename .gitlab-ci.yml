@@ -1,8 +1,3 @@
-image: docker:28.5.2-cli
-services:
-  - name: docker:28.5.2-dind
-
-
 stages:
     - lint
     - test
@@ -11,6 +6,7 @@ stages:
 
 lint:
     stage: lint
+    image: ubuntu:24.04
     before_script:
         - apt-get update && apt-get install -y curl build-essential clang
         - curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -29,6 +25,7 @@ lint:
 
 test:
     stage: test
+    image: ubuntu:24.04
     only:
         - main #TODO: delete before merging to main
     before_script:
@@ -55,6 +52,7 @@ test:
 
 package:
     stage: package
+    image: ubuntu:24.04
     only:
         - tags
     before_script:
@@ -70,6 +68,9 @@ package:
 deploy:
     #Build the docker container and push to registry
     stage: deploy
+    image: docker:28.5.2-cli
+    services:
+      - name: docker:28.5.2-dind
     script:
         - docker build -t $CI_REGISTRY_IMAGE:latest .
         - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
