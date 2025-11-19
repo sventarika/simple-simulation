@@ -1,10 +1,9 @@
 import json
-
 from pathlib import Path
+
 from simple_scenario import Scenario
 
 from simple_simulation.simulation_manager import SingleSimulationManager
-
 from test.check_test_result_format import check_test_result_format
 
 

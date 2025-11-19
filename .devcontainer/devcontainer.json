@@ -2,17 +2,14 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.245.2/containers/docker-existing-dockerfile
 {
 	"name": "simple-simulation",
-	"build": {
-		"dockerfile": "../Dockerfile",
-		"context": ".."
-	},
+	"image": "gitlab.ika.rwth-aachen.de:5050/fb-fi/simulation/simple-simulation/simple-simulation:latest",
 
 	"runArgs": [
 		"--net=host"
 	],
 
-	"workspaceMount": "source=${localWorkspaceFolder},target=/work/simple-simulation,type=bind",
-	"workspaceFolder": "/work/simple-simulation",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/work/develop/simple-simulation,type=bind",
+	"workspaceFolder": "/work/develop/simple-simulation",
 
 	"customizations": {
 		"vscode": {
@@ -28,7 +25,7 @@
 				"charliermarsh.ruff"
 			],
 			"settings": {
-				"python.defaultInterpreterPath": "/work/simple-simulation/.venv/bin/python",
+				"python.defaultInterpreterPath": "/work/develop/simple-simulation/.venv/bin/python",
 				"python.testing.pytestEnabled": true,
 				"python.testing.unittestEnabled": false,
 				"python.testing.pytestArgs": [

@@ -1,27 +1,26 @@
 from __future__ import annotations
 
+from copy import deepcopy
+from pathlib import Path
+from typing import TYPE_CHECKING
+
 import cv2
 import matplotlib as mpl
 import numpy as np
-
-from copy import deepcopy
-from loguru import logger
-from pathlib import Path
-from simple_scenario import Scenario
-from typing import TYPE_CHECKING
-
 from commonroad_dc import pycrcc
 from commonroad_dc.boundary import boundary
 from commonroad_dc.collision.trajectory_queries.trajectory_queries import (
     obb_enclosure_polygons_static,
 )
+from loguru import logger
+from simple_scenario import Scenario
 
 from simple_simulation.simulation_core.configuration import SimulationCoreConfiguration
 
+from .commonroad_vehicle_model import CommonRoadVehicleModel
 from .situation_renderer import SituationRenderer
 from .termination_status import TerminationStatus
 from .trajectory_vehicle_model import TrajectoryVehicleModel
-from .commonroad_vehicle_model import CommonRoadVehicleModel
 from .vehicle_state import VehicleState
 
 if TYPE_CHECKING:
@@ -630,7 +629,6 @@ class SimulationCore:
                         (int(self._video_shape[1]), int(self._video_shape[0])),
                         True,
                     )
-
                     if codec == "mp4v" and not video_file.exists():
                         msg = "Tried to use codec 'mp4v' after 'avc1', but both did not work."
                         raise RuntimeError(msg)
