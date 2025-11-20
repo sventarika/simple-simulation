@@ -1,0 +1,37 @@
+{
+
+    "scenario": "test/test_data/simulation_config/highway.json",
+    "simulation": {
+        "real_time_factor": 1.0,
+        "monitor_pilots": false,
+        "save_video": false,
+        "save_result": "test/test_results/simulation_config",
+        "i_job": null,
+        "live_plot": true,
+        "log_level": "INFO"
+    },
+    "termination_criteria": {
+        "max_duration": 1000.0,
+        "timeout": true,
+        "collision": false,
+        "off_road": false,
+        "goal_reached": true,
+        "standstill": false
+    },
+    "ego": {
+        "id": "ego",
+        "pilot": "highway_pilot",
+        "dynamics_model": "cr"
+    },
+    "objects": {
+        "default_pilot": "dummy_pilot",
+        "default_dynamics_model": "traj",
+        "specific_objects": {
+            "1104": {
+                "pilot": "highway_pilot",
+                "dynamics_model": "cr"
+            }
+        }
+    }
+
+}

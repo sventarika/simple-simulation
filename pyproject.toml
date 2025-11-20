@@ -5,10 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "simple-simulation"
 authors = [
-    {name = "Lennart Vater", email = "lennart.vater@ika.rwth-aachen.de"}
+    {name = "Lennart Vater", email = "lennart.vater@rwth-aachen.de"},
+    {name = "Sven Tarlowski", email = "sven.tarlowski@ika.rwth-aachen.de"},
+    {name = "ika - RWTH Aachen" , email = "opensource@ika.rwth-aachen.de"}
 ]
 maintainers = [
-    {name = "Lennart Vater", email = "lennart.vater@ika.rwth-aachen.de"}
+    {name = "Sven Tarlowski", email = "sven.tarlowski@ika.rwth-aachen.de"}
 ]
 description = "Execute simulation runs defined by simple-scenario for testing prototype automated driving systems and developing test scenario selection algorithms"
 readme = "README.md"
@@ -25,7 +27,7 @@ dependencies = [
     "matplotlib>=3.7.5",
     "numpy>=1.24.4",
     "onnx==1.14.0",
-    "opencv-python>=4.11.0.86",
+    "opencv-contrib-python>=4.12.0.88",
     "orjson>=3.10.15",
     "shapely==1.8.5.post1",
     "simple-scenario>=0.10.1",

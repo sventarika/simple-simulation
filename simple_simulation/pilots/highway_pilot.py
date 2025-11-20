@@ -92,7 +92,10 @@ class HighwayPilot(Pilot):
 
         ego_ref_s, _ = self._lanelet_wrapper.from_cart_to_ref_frenet(ego_x, ego_y)
         ego_lanelet_id = self._lanelet_wrapper.find_lanelet_id_by_position(ego_x, ego_y)
-        cur_min_timegap = self._min_dhw_safety / ego_v + self._min_timegap
+        if ego_v > 0:
+            cur_min_timegap = self._min_dhw_safety / ego_v + self._min_timegap
+        else:
+            cur_min_timegap = self._min_timegap
 
         if self._action_list:
             ego_a = self._action_list[-1][1]
@@ -151,7 +154,11 @@ class HighwayPilot(Pilot):
                 - ego_length / 2
                 - ego_ref_s
             )
-            cur_thw = cur_dhw / ego_v
+            # Calculate THW safely, avoiding division by very small velocities
+            if ego_v > 0.1:  # Only calculate THW if velocity is meaningful
+                cur_thw = cur_dhw / ego_v
+            else:
+                cur_thw = float("inf") if cur_dhw > 0 else 0.0
 
             cur_lead_v = lead_vehicle["v"]
 
@@ -361,6 +368,10 @@ class HighwayPilot(Pilot):
                 )  # now it is serious, brake harder than needed
             else:
                 a = self._aeb_a_brake_stage_2
+
+        # Ensure we don't command negative acceleration that would cause reversal
+        if ego_v <= 0.1 and a < 0:
+            a = 0.0  # Don't brake if already (almost) stopped
 
         # -- Monitoring --
         self._state_list.append(current_state)
@@ -762,7 +773,9 @@ class HighwayPilot(Pilot):
                 if surrounding_vehicles.right_lead:
                     right_lead_THW = right_lead_dhw / ego_v
                 if surrounding_vehicles.right_rear:
-                    right_rear_THW = right_rear_dhw / right_rear_v
+                    right_rear_THW = (
+                        right_rear_dhw / right_rear_v if right_rear_v > 0 else 20
+                    )
 
             # Go through criteria that prohibit a lane change
 

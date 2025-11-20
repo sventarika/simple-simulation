@@ -5,7 +5,7 @@ def evaluate_expected_termination_reason(
     scenario, expected_termination_reason, result_dir
 ):
     # Init simulation manager
-    simulation_manager = SingleSimulationManager(scenario, result_dir)
+    simulation_manager = SingleSimulationManager(scenario, result_dir=result_dir)
 
     # Run simulation
     result = simulation_manager.simulate()

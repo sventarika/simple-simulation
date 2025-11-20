@@ -1,5 +1,9 @@
 # simple-simulation
 
+<img src="https://github.com/ika-rwth-aachen/simple-simulation/blob/main/simple-simulation.svg?raw=True" width="400px" style="margin: 10px;">
+
+
+
 Execute simulation runs defined by [simple-scenario](https://github.com/ika-rwth-aachen/simple-scenario) to efficiently develop scenario-based testing methods (e.g., selecting test scenarios or testing prototype automated driving systems).
 
 # Examples
@@ -148,3 +152,7 @@ The authors would like to thank all partners within the Hi-Drive project (hi-dri
 
 <!-- <img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/funded_by_eu.svg" style="width:4in" /> -->
 <img src="assets/funded_by_eu.svg" style="width:4in" />
+
+Additional development is done within the [SYNERGIES project](https://synergies-ccam.eu/).
+
+<img src="assets/synergies.svg" style="width:4in" />
