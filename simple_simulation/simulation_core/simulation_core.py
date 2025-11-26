@@ -1,28 +1,31 @@
 from __future__ import annotations
 
+from copy import deepcopy
+from pathlib import Path
+from typing import TYPE_CHECKING
+
 import cv2
 import matplotlib as mpl
 import numpy as np
-
-from copy import deepcopy
-from loguru import logger
-from pathlib import Path
-from simple_scenario import Scenario
-from typing import TYPE_CHECKING
-
 from commonroad_dc import pycrcc
 from commonroad_dc.boundary import boundary
 from commonroad_dc.collision.trajectory_queries.trajectory_queries import (
     obb_enclosure_polygons_static,
 )
+from loguru import logger
+from simple_scenario import Scenario
 
+from simple_simulation.simulation_core.configuration import SimulationCoreConfiguration
+
+from .commonroad_vehicle_model import CommonRoadVehicleModel
 from .situation_renderer import SituationRenderer
 from .termination_status import TerminationStatus
 from .trajectory_vehicle_model import TrajectoryVehicleModel
-from .commonroad_vehicle_model import CommonRoadVehicleModel
 from .vehicle_state import VehicleState
 
 if TYPE_CHECKING:
+    from commonroad.scenario.obstacle import DynamicObstacle
+
     from .vehicle_dynamics_object import VehicleDynamicsObject
 
 
@@ -34,6 +37,7 @@ class SimulationCore:
     def __init__(
         self,
         scenario_or_config: str | Path | dict | Scenario,
+        configuration: SimulationCoreConfiguration | None = None,
         live_plot: bool = False,
         write_video_path: str | None = None,
         write_video_fps: float = 40.0,
@@ -48,6 +52,12 @@ class SimulationCore:
         self._i_job = i_job
 
         self._scenario_or_config = scenario_or_config
+
+        self._configuration = (
+            configuration
+            if configuration is not None
+            else SimulationCoreConfiguration()
+        )
 
         # Lazy loading to allow initialization of many SimulationCores before starting the simulation.
         self._scenario_name = None
@@ -160,15 +170,8 @@ class SimulationCore:
 
         return obs, reward, done, info
 
-    def _create_vehicle_dynamics_objects(
-        self,
-    ) -> dict[str | int, VehicleDynamicsObject]:
-        if self._verbose:
-            logger.info("Create vehicle dynamics objects")
-
-        vehicle_dynamics_objects = {}
-
-        # Ego vehicle
+    def _create_ego_vehicle_dynamics_object(self) -> VehicleDynamicsObject:
+        """Create dynamics object for ego vehicle."""
         if self._verbose:
             logger.info("Create vehicle dynamics object for ego")
 
@@ -180,59 +183,106 @@ class SimulationCore:
             v=ego_state.velocity,
             theta=ego_state.orientation,
         )
-        ego_dynamics_object = CommonRoadVehicleModel(
-            self._time_step, initial_ego_state, self._dt
+
+        dynamics_model = self._configuration.ego.get("dynamics_model")
+
+        if dynamics_model == "cr":
+            return CommonRoadVehicleModel(self._time_step, initial_ego_state, self._dt)
+        if dynamics_model == "traj":
+            other_states = [
+                VehicleState(
+                    x=s.position[0],
+                    y=s.position[1],
+                    delta=0.0,
+                    v=s.velocity,
+                    theta=s.orientation,
+                )
+                for s in self._planning_problem.initial_state_prediction.trajectory.state_list
+            ]
+
+            return TrajectoryVehicleModel(
+                self._time_step,
+                initial_ego_state,
+                self._dt,
+                state_list_after_initial_step=other_states,
+            )
+        msg = "Unknown dynamics model for ego vehicle"
+        raise Exception(msg)
+
+    def _create_object_vehicle_dynamics_object(
+        self, dobj: DynamicObstacle
+    ) -> VehicleDynamicsObject:
+        """Create dynamics object for a single object vehicle."""
+        if self._verbose:
+            logger.info(
+                "Create vehicle dynamics objects for object vehicle: {}",
+                dobj.obstacle_id,
+            )
+
+        initial_object_vehicle_state = VehicleState(
+            x=dobj.initial_state.position[0],
+            y=dobj.initial_state.position[1],
+            delta=0.0,
+            v=dobj.initial_state.velocity,
+            theta=dobj.initial_state.orientation,
         )
-        vehicle_dynamics_objects["ego"] = ego_dynamics_object
+
+        # Determine dynamics model
+        if str(dobj.obstacle_id) in self._configuration.objects.get(
+            "specific_objects", {}
+        ):
+            dynamics_model = self._configuration.objects["specific_objects"][
+                str(dobj.obstacle_id)
+            ].get("dynamics_model", "traj")
+        else:
+            dynamics_model = self._configuration.objects.get(
+                "default_dynamics_model", "traj"
+            )
+
+        if dynamics_model == "cr":
+            return CommonRoadVehicleModel(
+                self._time_step, initial_object_vehicle_state, self._dt
+            )
+        if dynamics_model == "traj":
+            other_states = [
+                VehicleState(
+                    x=s.position[0],
+                    y=s.position[1],
+                    delta=0.0,
+                    v=s.velocity,
+                    theta=s.orientation,
+                )
+                for s in dobj.prediction.trajectory.state_list
+            ]
+
+            return TrajectoryVehicleModel(
+                self._time_step,
+                initial_object_vehicle_state,
+                self._dt,
+                state_list_after_initial_step=other_states,
+            )
+        msg = f"Unknown dynamics model for object vehicle {dobj.obstacle_id}"
+        raise Exception(msg)
+
+    def _create_vehicle_dynamics_objects(
+        self,
+    ) -> dict[str | int, VehicleDynamicsObject]:
+        if self._verbose:
+            logger.info("Create vehicle dynamics objects")
+
+        vehicle_dynamics_objects = {}
+
+        # Ego vehicle
+        vehicle_dynamics_objects["ego"] = self._create_ego_vehicle_dynamics_object()
 
         # Object vehicles
         if self._verbose:
             logger.info("Create vehicle dynamics objects for object vehicles")
 
         for dobj in self._scenario.dynamic_obstacles:
-            if self._verbose:
-                logger.info(
-                    "Create vehicle dynamics objects for object vehicle: {}",
-                    dobj.obstacle_id,
-                )
-
-            initial_object_vehicle_state = VehicleState(
-                x=dobj.initial_state.position[0],
-                y=dobj.initial_state.position[1],
-                delta=0.0,
-                v=dobj.initial_state.velocity,
-                theta=dobj.initial_state.orientation,
+            vehicle_dynamics_objects[dobj.obstacle_id] = (
+                self._create_object_vehicle_dynamics_object(dobj)
             )
-
-            # Fixed dynamics_model for all object vehicles
-            dynamics_model = "traj"
-
-            if dynamics_model == "cr":
-                object_vehicle_dynamics_object = CommonRoadVehicleModel(
-                    self._time_step, initial_object_vehicle_state, self._dt
-                )
-            elif dynamics_model == "traj":
-                other_states = [
-                    VehicleState(
-                        x=s.position[0],
-                        y=s.position[1],
-                        delta=0.0,
-                        v=s.velocity,
-                        theta=s.orientation,
-                    )
-                    for s in dobj.prediction.trajectory.state_list
-                ]
-
-                object_vehicle_dynamics_object = TrajectoryVehicleModel(
-                    self._time_step,
-                    initial_object_vehicle_state,
-                    self._dt,
-                    state_list_after_initial_step=other_states,
-                )
-            else:
-                raise Exception
-
-            vehicle_dynamics_objects[dobj.obstacle_id] = object_vehicle_dynamics_object
 
         return vehicle_dynamics_objects
 
@@ -303,30 +353,35 @@ class SimulationCore:
         done = False
 
         # Offroad check
-        if self._time_step == 0:
+        if (
+            self._configuration.termination_criteria.get("off_road")
+            and self._time_step == 0
+        ):
             self._termination_status.is_offroad = not obb_enclosure_polygons_static(
                 self._road_inclusion_polygon_group, self._ego_vehicle_collision_object
             )
 
-        self._termination_status.is_offroad = (
-            self._termination_status.is_offroad
-            or self._road_boundary_collision_object.collide(
-                self._ego_vehicle_collision_object
+        if self._configuration.termination_criteria.get("off_road"):
+            self._termination_status.is_offroad = (
+                self._termination_status.is_offroad
+                or self._road_boundary_collision_object.collide(
+                    self._ego_vehicle_collision_object
+                )
             )
-        )
 
         # Collision check
-        for do_id, collision_obj in self._object_vehicle_collision_objects.items():
-            is_collision_with_this_obj = self._ego_vehicle_collision_object.collide(
-                collision_obj
-            )
-            if is_collision_with_this_obj:
-                if self._verbose:
-                    logger.info("Collision with object vehicle {}", do_id)
-                self._termination_status.collision_obj_id = do_id
-            self._termination_status.is_collision = (
-                self._termination_status.is_collision or is_collision_with_this_obj
-            )
+        if self._configuration.termination_criteria.get("collision"):
+            for do_id, collision_obj in self._object_vehicle_collision_objects.items():
+                is_collision_with_this_obj = self._ego_vehicle_collision_object.collide(
+                    collision_obj
+                )
+                if is_collision_with_this_obj:
+                    if self._verbose:
+                        logger.info("Collision with object vehicle {}", do_id)
+                    self._termination_status.collision_obj_id = do_id
+                self._termination_status.is_collision = (
+                    self._termination_status.is_collision or is_collision_with_this_obj
+                )
 
         # Timeout check; reset is already time_step 0, if there are 200 time_steps in total, 199 is the last one.
         max_time = (
@@ -339,20 +394,22 @@ class SimulationCore:
             - 1
         )
 
-        if self._time_step >= max_time:
-            self._termination_status.is_time_out = True
+        if self._configuration.termination_criteria.get("timeout"):
+            self._termination_status.is_time_out = self._time_step >= max_time
 
         # Goal reached check
-        self._termination_status.is_goal_reached = (
-            self._ego_vehicle_collision_object.collide(
-                self._goal_region_collision_object
+        if self._configuration.termination_criteria.get("goal_reached"):
+            self._termination_status.is_goal_reached = (
+                self._ego_vehicle_collision_object.collide(
+                    self._goal_region_collision_object
+                )
             )
-        )
 
         # Standstill check
-        self._termination_status.is_standstill = self._vehicle_dynamics_objects[
-            "ego"
-        ].state.v < (1 / 3.6)
+        if self._configuration.termination_criteria.get("standstill"):
+            self._termination_status.is_standstill = self._vehicle_dynamics_objects[
+                "ego"
+            ].state.v < (1 / 3.6)
 
         done = self._termination_status.is_terminated()
 
@@ -390,7 +447,7 @@ class SimulationCore:
             )
 
             dhw = np.round(lead_s - ego_s, 2)
-            thw = np.round(dhw / ego_obs["v"], 4)
+            thw = np.round(dhw / ego_obs["v"], 4) if ego_obs["v"] > 0 else np.inf
 
             dv = ego_obs["v"] - lead_vehicle["v"]
 
@@ -570,7 +627,6 @@ class SimulationCore:
                         (int(self._video_shape[1]), int(self._video_shape[0])),
                         True,
                     )
-
                     if codec == "mp4v" and not video_file.exists():
                         msg = "Tried to use codec 'mp4v' after 'avc1', but both did not work."
                         raise RuntimeError(msg)
