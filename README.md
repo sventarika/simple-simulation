@@ -8,48 +8,47 @@ Execute simulation runs defined by [simple-scenario](https://github.com/ika-rwth
 
 # Examples
 
-:bulb: *To recreate these videos use: [examples/generate_simulation_run_videos.py](https://github.com/ika-rwth-aachen/simple-simulation/blob/main/examples/generate_simulation_run_videos.py).*
+:bulb: *To recreate these videos use: `examples/generate_simulation_run_videos.py`.*
 
 ## Free driving test scenario
 
-[`examples/example_scenario0.json`](https://github.com/ika-rwth-aachen/simple-simulation/blob/main/examples/example_scenario0.json)
+`examples/example_scenario0.json`
 
 Test scenario:
 
-<img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/example_scenario0.gif" />
+<img src="assets/example_scenario0.gif">
 
 Simulation run:
 
-<img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/example_scenario0_simulation_run.gif" />
+<img src="assets/example_scenario0_simulation_run.gif">
 
 Result: `is_goal_reached`
 
 ## Deceleration test scenario
 
-[`examples/example_scenario1.json`](https://github.com/ika-rwth-aachen/simple-simulation/blob/main/examples/example_scenario1.json)
+`examples/example_scenario1.json`
 
 Test scenario:
 
-<img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/example_scenario1.gif" />
-
+<img src="assets/example_scenario1.gif">
 
 Simulation run:
 
-<img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/example_scenario1_simulation_run.gif" />
+<img src="assets/example_scenario1_simulation_run.gif">
 
 Result: `is_standstill`
 
 ## Cut-in test scenario
 
-[`examples/example_scenario2.json`](https://github.com/ika-rwth-aachen/simple-simulation/blob/main/examples/example_scenario2.json)
+`examples/example_scenario2.json`
 
 Test scenario:
 
-<img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/example_scenario2.gif" />
+<img src="assets/example_scenario2.gif">
 
 Simulation run:
 
-<img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/example_scenario2_simulation_run.gif" />
+<img src="assets/example_scenario2_simulation_run.gif">
 
 Result: `is_collision`
 
@@ -144,10 +143,16 @@ The `simple_simulation` module consists of the following submodules:
 
 This package is developed as part of the [Hi-Drive project](https://www.hi-drive.eu).
 
-<img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/Hi_Drive_Logo_Claim_rgb.svg" style="width:2in" />
+<!-- <img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/Hi_Drive_Logo_Claim_rgb.svg" style="width:2in" /> -->
+<img src="assets/Hi_Drive_Logo_Claim_rgb.svg" style="width:2in" />
 
 The research leading to these results has received funding from the European Union’s Horizon 2020 research and innovation programme under grant agreement No 101006664.
 The sole responsibility of this publication lies with the authors.
 The authors would like to thank all partners within the Hi-Drive project (hi-drive.eu) for their cooperation and valuable contribution.
 
-<img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/funded_by_eu.svg" style="width:4in" />
+<!-- <img src="https://raw.githubusercontent.com/ika-rwth-aachen/simple-simulation/refs/heads/main/assets/funded_by_eu.svg" style="width:4in" /> -->
+<img src="assets/funded_by_eu.svg" style="width:4in" />
+
+Additional development is done within the [SYNERGIES project](https://synergies-ccam.eu/).
+
+<img src="assets/synergies.svg" style="width:4in" />

@@ -6,29 +6,49 @@ import orjson
 from loguru import logger
 from simple_scenario import Scenario
 from time import time
-from typing import TYPE_CHECKING
+from pathlib import Path
 
-if TYPE_CHECKING:
-    from pathlib import Path
-
-
+from ..pilots import Pilot
 from ..simulation_core import SimulationCore
 from ..pilots import DummyPilot, HighwayPilot
+from simple_simulation.simulation_core.configuration import SimulationCoreConfiguration
 
 
 class SingleSimulationManager:
     def __init__(
         self,
-        scenario_file_or_config: str | Path | dict | Scenario,
-        result_dir: str | None = None,
+        scenario_file_or_config: str | Path | dict | Scenario | None = None,
+        simulation_config: str | Path | dict | None = None,
+        result_dir: str | Path | None = None,
         i_job: int | None = None,
         live_plot: bool = False,
         save_video: bool = False,
         save_result: bool = False,
         monitor_pilots: bool = False,
     ) -> None:
+        # If simulation_config is provided, load configuration from file
+        if simulation_config is not None:
+            config = SimulationCoreConfiguration(simulation_config)
+            scenario_file_or_config = config.scenario
+            result_dir = (
+                Path(config.simulation["save_result"])
+                if config.simulation["save_result"]
+                else result_dir
+            )
+            i_job = config.simulation.get("i_job", i_job)
+            live_plot = config.simulation.get("live_plot", live_plot)
+            save_video = config.simulation.get("save_video", save_video)
+            save_result = bool(config.simulation.get("save_result", save_result))
+            monitor_pilots = config.simulation.get("monitor_pilots", monitor_pilots)
+        elif scenario_file_or_config is None:
+            msg = "Either 'scenario_file_or_config' or 'simulation_config' must be provided"
+            raise ValueError(msg)
+
         self._scenario = Scenario.from_x(scenario_file_or_config)
 
+        self._config = (
+            config if simulation_config is not None else SimulationCoreConfiguration()
+        )
         self._i_job = i_job
         self._live_plot = live_plot
         self._save_result = save_result
@@ -36,11 +56,15 @@ class SingleSimulationManager:
         self._monitor_pilots = monitor_pilots
 
         # Result dir handling
-        self._result_dir = result_dir
+        self._result_dir = (
+            Path(result_dir)
+            if result_dir and not isinstance(result_dir, Path)
+            else result_dir
+        )
         self._video_dir = None
         self._monitor_plot_dir = None
 
-        if result_dir is None:
+        if self._result_dir is None:
             if self._save_video:
                 msg = "'save_video' is True, but there is no result_dir."
                 raise RuntimeError(msg)
@@ -69,6 +93,54 @@ class SingleSimulationManager:
 
         logger.info(msg)
 
+    def _assign_pilots(self, obs: dict) -> dict:
+        """Assign pilots to actors based on configuration."""
+        dt = obs["general"]["dt"]
+        pilots = {}
+
+        if self._config:
+            # Use configuration to assign pilots
+            for obj_id in obs["dynamic_objects"]:
+                if obj_id == "ego":
+                    pilot_name = self._config.ego.get("pilot", "highway_pilot")
+                # Check for specific object config first
+                elif str(obj_id) in self._config.objects.get("specific_objects", {}):
+                    specific_config = self._config.objects.get(
+                        "specific_objects", {}
+                    ).get(str(obj_id), {})
+                    pilot_name = specific_config.get(
+                        "pilot",
+                        self._config.objects.get("default_pilot", "highway_pilot"),
+                    )
+                else:
+                    pilot_name = self._config.objects.get(
+                        "default_pilot", "highway_pilot"
+                    )
+
+                pilots[obj_id] = self._create_pilot(pilot_name, dt, obj_id)
+        else:
+            # Fallback to hardcoded behavior
+            for obj_id in obs["dynamic_objects"]:
+                if obj_id == "ego":
+                    pilots[obj_id] = HighwayPilot(dt, ego_id=obj_id, silent=True)
+                else:
+                    pilots[obj_id] = DummyPilot()
+
+        return pilots
+
+    def _create_pilot(self, pilot_name: str, dt: float, obj_id: str) -> Pilot:
+        """Factory method to create pilot instances."""
+        pilot_map = {
+            "highway_pilot": lambda: HighwayPilot(dt, ego_id=obj_id, silent=True),
+            "dummy_pilot": lambda: DummyPilot(),
+        }
+
+        if pilot_name not in pilot_map:
+            msg = f"Unknown pilot type: {pilot_name}"
+            raise ValueError(msg)
+
+        return pilot_map[pilot_name]()
+
     def simulate(self) -> dict:
         self._log_info(f"Simulate scenario: {self.scenario_name}")
 
@@ -85,14 +157,7 @@ class SingleSimulationManager:
 
         # Assign pilots to actors
         dt = obs["general"]["dt"]
-        # Fixed pilots for all vehicles (DummyPilot for object vehicles, HighwayPilot for ego)
-        pilots = {}
-        for obj_id in obs["dynamic_objects"]:
-            if obj_id == "ego":
-                pilots[obj_id] = HighwayPilot(dt, ego_id=obj_id, silent=True)
-
-            else:
-                pilots[obj_id] = DummyPilot()
+        pilots = self._assign_pilots(obs)
 
         # Run main simulation loop
         self._log_info("Run simulation")
